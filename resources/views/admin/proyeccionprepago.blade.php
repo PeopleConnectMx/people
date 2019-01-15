@@ -40,8 +40,6 @@ input::-webkit-inner-spin-button {
           <div class="row">
             <h3 class="col-lg-2">
               TM Prepago
-
-
               <select class="form-control" id="select" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
                 <option value="{{URL('/direccion/proyeccion/prepago')}}/{{date('Y-m-d')}}"></option>
                 @foreach($rfechas as $value)
@@ -93,12 +91,14 @@ input::-webkit-inner-spin-button {
                     {{--*/ $pp= array_key_exists($date, $tmpreposm) ? $tmpreposm[$date] : 0 /*--}}
                     {{--*/ $pr= array_key_exists($date, $pmr) ? $pmr[$date] : 0 /*--}}
                     {{--*/ $color='black'; $calc=0;
+
                     if($pp!=0){
-                      $calc= round(($pr/$pp)*100 ,0);
+                      $calc= round(($pr/$pp)*100 ,1);
+                      
                       if ($calc < 80){
                       $color= 'red';
                       }
-                      elseif($calc > 90){
+                      elseif($calc > 95){
                         $color='green';
                       }
                       else{
@@ -112,6 +112,9 @@ input::-webkit-inner-spin-button {
 
 
                     } /*--}}
+
+
+
                       <td >
                         <input type="number" id="tmpreposm{{$date}}" onchange="tmpreposgen(this.id)" value="{{ $pp }}"  style="color: {{$color}};width: 40px; background-color:transparent; border-color:transparent;">
                         <div id="tmpreposm{{$date}}2" >
@@ -581,6 +584,7 @@ input::-webkit-inner-spin-button {
                     <td>Ventas por día (Mat)</td>
                     {{--*/ $date=$fi /*--}}
                     {{--*/ $tot = 0/*--}}
+                    {{--*/ $xd_mat = 0/*--}}
                     {{--*/ $dias = 0/*--}}
                     {{--*/ $cont_pos_mat = 0 /*--}}
                     {{--*/ $cont_pos_mat_div = 0 /*--}}
@@ -601,6 +605,11 @@ input::-webkit-inner-spin-button {
                       $color='orange';
                       }
 
+                      if($date <= date('Y-m-d')){
+                        $xd_mat = $xd_mat + $vp;
+                      }
+
+
                       $tot = $tot + $vp;
                     } /*--}}
                       <td>
@@ -618,7 +627,7 @@ input::-webkit-inner-spin-button {
                         /*--}}
                       {{--*/ $date = date ("Y-m-d", strtotime("+1 day", strtotime($date))) /*--}}
                     @endwhile
-                    <td> {{ $tot }}
+                    <td>{{ $tot }} 
                       {{--*/
                         $color='black'; $calc=0;
                         if($cont_pos_mat_div!=0){
@@ -645,12 +654,15 @@ input::-webkit-inner-spin-button {
                           $color2='orange';
                           }
                         }
+
+                        $nuevo_prom_mat = round($cont_pos_mat / $xd_mat, 1);
                         /*--}}
 
 
                       <div id="tmpreposm{{$date}}2" >
                         <span class="badge" style="background-color:{{$color1}};">{{ $cont_pos_mat}}</span><br>
                         <span class="badge" style="background-color:{{$color2}};">{{ $prom_Mat }} %</span>
+                        <span class="badge" style="background-color:{{$color1}};">{{ $nuevo_prom_mat }} %</span>
                       </div>
                     </td>
                   </tr>
@@ -659,6 +671,7 @@ input::-webkit-inner-spin-button {
                     <td>Ventas por día (Ves)</td>
                     {{--*/ $date=$fi /*--}}
                     {{--*/ $tot = 0/*--}}
+                    {{--*/ $xd_vesp = 0/*--}}
                     {{--*/ $cont_pos_mat = 0 /*--}}
                     {{--*/ $cont_pos_mat_div = 0 /*--}}
 
@@ -666,19 +679,24 @@ input::-webkit-inner-spin-button {
                     {{--*/ $vp= array_key_exists($date, $tmprevenv) ? $tmprevenv[$date] : 0 /*--}}
                     {{--*/ $vr= array_key_exists($date, $vvr) ? $vvr[$date] : 0 /*--}}
                     {{--*/ $color='black'; $calc=0;
-                    if($vp!=0){
-                      $calc= round(($vr/$vp)*100 ,0);
-                      if ($calc < 80){
-                      $color= 'red';
+                      if($vp!=0){
+                        $calc= round(($vr/$vp)*100 ,0);
+                        if ($calc < 80){
+                        $color= 'red';
+                        }
+                        elseif($calc > 90){
+                          $color='green';
+                        }
+                        else{
+                        $color='orange';
+                        }
+                        $tot = $tot + $vp;
+                      } 
+                      if($date <= date('Y-m-d')){
+                        $xd_vesp = $xd_vesp + $vp;
                       }
-                      elseif($calc > 90){
-                        $color='green';
-                      }
-                      else{
-                      $color='orange';
-                      }
-                      $tot = $tot + $vp;
-                    } /*--}}
+
+                    /*--}}
                       <td>
                         <input type="number" id="tmprevenv{{$date}}" value="{{$vp}}"  onchange="tmprevengen(this.id)" style="color: {{$color}}; width: 40px; background-color:transparent; border-color:transparent;">
                         <div id="tmprevenv{{$date}}2" >
@@ -721,21 +739,26 @@ input::-webkit-inner-spin-button {
                           $color2='orange';
                           }
                         }
+                        $nuevo_prom_vesp = round($cont_pos_mat / $xd_vesp, 1);
                         /*--}}
 
 
                       <div id="tmpreposm{{$date}}2" >
                         <span class="badge" style="background-color:{{$color1}};">{{ $cont_pos_mat}}</span><br>
                         <span class="badge" style="background-color:{{$color2}};">{{ $prom_Mat }} %</span>
+                        <span class="badge" style="background-color:{{$color1}};">{{ $nuevo_prom_mat }} %</span>
                       </div>
                     </td>
-
                   </tr>
+
 
                   <tr class="danger">
                     <td>Ventas por día (Gen)</td>
                     {{--*/ $date=$fi /*--}}
                     {{--*/ $tot = 0/*--}}
+                    {{--*/ $xd_gen = 0/*--}}
+                    {{--*/ $nuevo_prom_gen = 0/*--}}
+
                     {{--*/ $cont_pos_mat = 0 /*--}}
                     {{--*/ $cont_pos_mat_div = 0 /*--}}
 
@@ -766,8 +789,19 @@ input::-webkit-inner-spin-button {
                         }
                         if(array_key_exists($date, $tmpreveng) ? $tmpreveng[$date] : 0 != 0){
                             $dias += 1;
+
+
                         }
+
                         $tot = $tot + (array_key_exists($date, $tmpreveng) ? $tmpreveng[$date] : 0);
+
+                        if($date <= date('Y-m-d')){
+
+                          $xd_gen = $xd_gen + (array_key_exists($date, $tmpreveng) ? $tmpreveng[$date] : 0);
+                        }
+
+
+
                     /*--}}
 
                       <td style="text-align: center;">
@@ -784,10 +818,12 @@ input::-webkit-inner-spin-button {
                           $cont_pos_mat_div++;
                         }
                         /*--}}
-                      {{--*/ $tot = $tot + (array_key_exists($date, $tmpreveng) ? $tmpreveng[$date] : 0); /*--}}
+                      {{--*/ $tot = $tot + (array_key_exists($date, $tmpreveng) ? $tmpreveng[$date] : 0); 
+                        
+                       /*--}}
                       {{--*/ $date = date ("Y-m-d", strtotime("+1 day", strtotime($date))) /*--}}
-
                     @endwhile
+
                     <td> {{ $tot }}
 
                       {{--*/
@@ -798,7 +834,7 @@ input::-webkit-inner-spin-button {
                           if ($calc < 80){
                           $color1= 'red';
                           }
-                          elseif($calc > 90){
+                          elseif($calc > 95){
                             $color1='green';
                           }
                           else{
@@ -810,19 +846,23 @@ input::-webkit-inner-spin-button {
                           if ($prom_Mat < 80){
                           $color2= 'red';
                           }
-                          elseif($prom_Mat > 90){
+                          elseif($prom_Mat > 95){
                             $color2='green';
                           }
                           else{
                           $color2='orange';
                           }
                         }
+
+                        $nuevo_prom_gen = round($cont_pos_mat / $xd_gen, 1);
+
                         /*--}}
 
 
                       <div id="tmpreposm{{$date}}2" >
-                        <span class="badge" style="background-color:{{$color1}};">{{ $cont_pos_mat}}</span><br>
+                        <span class="badge" style="background-color:{{$color1}};">{{ $cont_pos_mat}} </span><br>
                         <span class="badge" style="background-color:{{$color2}};">{{ $prom_Mat }} %</span>
+                        <span class="badge" style="background-color:{{$color1}};">{{ $nuevo_prom_gen}} %</span><br>
                       </div>
                     </td>
                   </tr>
@@ -994,7 +1034,7 @@ input::-webkit-inner-spin-button {
                       if ($calc < 80){
                       $color= 'red';
                       }
-                      elseif($calc > 90){
+                      elseif($calc > 95){
                         $color='green';
                       }
                       else{
@@ -1044,7 +1084,7 @@ input::-webkit-inner-spin-button {
                       if ($calc < 80){
                       $color= 'red';
                       }
-                      elseif($calc > 90){
+                      elseif($calc > 95){
                         $color='green';
                       }
                       else{
@@ -1096,7 +1136,7 @@ input::-webkit-inner-spin-button {
                       if ($calc < 80){
                       $color= 'red';
                       }
-                      elseif($calc > 90){
+                      elseif($calc > 95){
                         $color='green';
                       }
                       else{
@@ -1311,7 +1351,7 @@ input::-webkit-inner-spin-button {
                       if ($ingresos_pmat < 80){
                       $color= 'red';
                       }
-                      elseif($ingresos_pmat > 90){
+                      elseif($ingresos_pmat > 95){
                         $color='green';
                       }
                       else{
@@ -1357,7 +1397,7 @@ input::-webkit-inner-spin-button {
                       if ($ingresos_v < 80){
                       $color= 'red';
                       }
-                      elseif($ingresos_v > 90){
+                      elseif($ingresos_v > 95){
                         $color='green';
                       }
                       else{
@@ -1401,7 +1441,7 @@ input::-webkit-inner-spin-button {
                       if ($ingresos < 80){
                       $color= 'red';
                       }
-                      elseif($ingresos > 90){
+                      elseif($ingresos > 95){
                         $color='green';
                       }
                       else{
@@ -1451,7 +1491,7 @@ input::-webkit-inner-spin-button {
                         $dias	= (strtotime(date('Y-m-d'))-strtotime($date))/86400;
                         $dias = abs($dias); $dias = floor($dias);
                       }
-                      if($dias<3){ $dias=0;}
+                      if($dias<'3'){ $dias=0;}
                       elseif($dias==3){ $dias=10; }
                       elseif($dias==4){ $dias=30; }
                       elseif($dias==5){ $dias=40; }
@@ -1470,7 +1510,7 @@ input::-webkit-inner-spin-button {
                         if ($calc < 80){
                         $color= 'red';
                         }
-                        elseif($calc > 90){
+                        elseif($calc > 95){
                           $color='green';
                         }
                         else{
@@ -1487,7 +1527,7 @@ input::-webkit-inner-spin-button {
 
                       <td style="text-align: center;">
                         <!-- <input type="number" id="tmprealtm{{$date}}" onchange="tmprealtgen(this.id)" value="{{array_key_exists($date, $tmprealtm) ? $tmprealtm[$date] : 0}}"  style="width: 40px; background-color:transparent; border-color:transparent;"> -->
-                        <input type="number" id="tmprealtm{{$date}}" onchange="tmprealtgen(this.id)" value="{{$dias}}"  style="width: 23px; margin-left: -20%; background-color:transparent; border-color:transparent; text-align: right;">%
+                        <input type="number" id="tmprealtm{{$date}}" onchange="tmprealtgen(this.id)" value="{{$dias}}"  style="width: 23px; margin-left: -20%; background-color:transparent; border-color:transparent; text-align: right;">% 
                         <div id="tmprealtm{{$date}}2" >
                           <span class="badge" style="margin-left: -20%;background-color:{{$color}};">{{ $altasm}}% </span>
                         </div>
@@ -1519,7 +1559,7 @@ input::-webkit-inner-spin-button {
                         $dias	= (strtotime(date('Y-m-d'))-strtotime($date))/86400;
                         $dias = abs($dias); $dias = floor($dias);
                       }
-                      if($dias<3){ $dias=0; }
+                      if($dias < 3){ $dias=0; }
                       elseif($dias==3){ $dias=10; }
                       elseif($dias==4){ $dias=30; }
                       elseif($dias==5){ $dias=40; }
@@ -1537,7 +1577,7 @@ input::-webkit-inner-spin-button {
                         if ($calc < 80){
                         $color= 'red';
                         }
-                        elseif($calc > 90){
+                        elseif($calc > 95){
                           $color='green';
                         }
                         else{
@@ -1586,7 +1626,7 @@ input::-webkit-inner-spin-button {
                         $dias	= (strtotime(date('Y-m-d'))-strtotime($date))/86400;
                         $dias = abs($dias); $dias = floor($dias);
                       }
-                      if($dias<3){ $dias=0; }
+                      if($dias < 3){ $dias=0; }
                       elseif($dias==3){ $dias=10; }
                       elseif($dias==4){ $dias=30; }
                       elseif($dias==5){ $dias=40; }
@@ -1605,7 +1645,7 @@ input::-webkit-inner-spin-button {
                         if ($calc < 80){
                         $color= 'red';
                         }
-                        elseif($calc > 90){
+                        elseif($calc > 95){
                           $color='green';
                         }
                         else{
@@ -1656,7 +1696,7 @@ input::-webkit-inner-spin-button {
                       if ($calc < 80){
                       $color= 'red';
                       }
-                      elseif($calc > 90){
+                      elseif($calc > 95){
                         $color='green';
                       }
                       else{
@@ -1707,7 +1747,7 @@ input::-webkit-inner-spin-button {
                       if ($calc < 80){
                       $color= 'red';
                       }
-                      elseif($calc > 90){
+                      elseif($calc > 95){
                         $color='green';
                       }
                       else{
@@ -1758,7 +1798,7 @@ input::-webkit-inner-spin-button {
                       if ($calc < 80){
                       $color= 'red';
                       }
-                      elseif($calc > 90){
+                      elseif($calc > 95){
                         $color='green';
                       }
                       else{
@@ -2013,15 +2053,20 @@ function tmpreinggen(id) {
 }
 
 function tmprealtgen(id) {
+  console.log(id);
   var fecha = id.substr(id.length - 10);
+  console.log(fecha);
   var idgen = "#tmprealtg" + id.substr(id.length - 10);
   var idmat = "#tmprealtm" + id.substr(id.length - 10);
   var idves = "#tmprealtv" + id.substr(id.length - 10);
   var val= parseInt($(idmat).val()) + parseInt($(idves).val());
+
   act(fecha,"tmpre","alt",parseInt($(idmat).val()),"m");
   act(fecha,"tmpre","alt",parseInt($(idves).val()),"v");
   act(fecha,"tmpre","alt",val,"g");
+
   $(idgen).val( val );
+
 }
 
 function tmprealtnum(id){

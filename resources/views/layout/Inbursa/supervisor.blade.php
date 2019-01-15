@@ -34,7 +34,7 @@
                                 <li><a href="{{ url('/InbursaVidatel/reportes') }}">Reportes Vidatel</a></li>
                                 <li><a href="{{ url('/Inbursa_soluciones/reportes') }}">Reportes Soluciones</a></li>
                                 <!--<li><a href="{{ url('prepago/supervisor') }}">Cambiar rango de fecha</a></li>-->
-
+                                <li><a href="{{ url('/operaciones/reporte') }}">Reporte general de operaciones</a></li>
                                 <li><a href="{{ url('prepago/supervisor/plantilla') }}">Plantilla</a></li>
                                 <li><a href="{{ url('prepago/supervisor/Asistencia') }}">Pase de Asistencia</a></li>
                                 <li><a href="{{ url('prepago/supervisor/AsistenciaDatos') }}">Asistencia</a></li>
@@ -47,8 +47,8 @@
                                 <li><a href="{{ url('/inicioDescargaVentasRechazadas') }}">Descargar ventas editadas</a></li>-->
                                 <li><a href="{{ url('/EdicionAva') }}">Edicion por avance</a></li>
                                 <li><a href="{{ url('/EdicionEsta') }}">Edicion por Estatus</a></li>
-			        <li><a href="{{ url('/EdicionEdi') }}">Edicion por editor</a></li>
-                                
+			                     <li><a href="{{ url('/EdicionEdi') }}">Edicion por editor</a></li>
+                                <li><a href="{{ url('/asistenciaHistorico') }}">Reporte Historico Asistencias</a></li>
                                 <!--<li><a href="/">Something else here</a></li>
                                 <li class="divider"></li>
                                 <li><a href="/">Separated link</a></li>

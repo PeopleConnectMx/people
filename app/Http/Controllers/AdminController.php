@@ -109,8 +109,8 @@ class AdminController extends Controller {
         $super = DB::table('empleados')
                 ->select('usuarios.id', 'nombre_completo')
                 ->join('usuarios', 'usuarios.id', '=', 'empleados.id')
-                ->whereIn('puesto', array("Supervisor", "Root", "Jefe de procesos"))
-                ->whereIn('area', array("Operaciones", "Root", 	"Administracion"))
+                ->whereIn('puesto', array("Supervisor", "Root", "Jefe de procesos", "Director General"))
+                ->whereIn('area', array("Operaciones", "Root", 	"Administracion", "Direccion General"))
                 ->where(['usuarios.active' => true])
                 ->orderBy('nombre_completo', 'asc')
                 ->pluck('nombre_completo', 'id');
@@ -659,6 +659,7 @@ class AdminController extends Controller {
                     ->join('usuarios', 'usuarios.id', '=', 'empleados.id')
                     ->where('empleados.id', $value)
                     ->get();
+                    #dd($user);
         } else {
             $user = new Empleado;
             $user->id = $value;
@@ -718,11 +719,21 @@ class AdminController extends Controller {
         $super = DB::table('empleados')
                 ->select('usuarios.id', 'nombre_completo')
                 ->join('usuarios', 'usuarios.id', '=', 'empleados.id')
-                ->whereIn('puesto', array("Supervisor", "Root"))
-                ->whereIn('area', array("Operaciones", "Root"))
+                ->whereIn('puesto', array("Supervisor", "Root", "Coach", "Director General"))
+                ->whereIn('area', array("Operaciones", "Root", "Direccion General"))
                 ->where(['usuarios.active' => true])
                 ->orderBy('nombre_completo', 'asc')
                 ->pluck('nombre_completo', 'id');
+/*
+        $coach = DB::table('empleados')
+                ->select('empleados.id', 'empleados.nombre_completo')
+                ->join('candidatos', 'candidatos.id', '=', 'empleados.id')
+                ->where(['puesto' => 'Coach', 'area' => 'Operaciones', 'empleados.estatus' => 'activo'])
+                ->orderBy('nombre_completo', 'asc')
+                ->pluck('nombre_completo', 'id');
+
+*/
+
 
         $coor = DB::table('empleados')
                 ->select('usuarios.id', 'nombre_completo')
@@ -761,12 +772,7 @@ class AdminController extends Controller {
                 ->where('empleados.id', '=', $value)
                 ->get();
 
-        $coach = DB::table('empleados')
-                ->select('empleados.id', 'empleados.nombre_completo')
-                ->join('candidatos', 'candidatos.id', '=', 'empleados.id')
-                ->where(['puesto' => 'Coach', 'area' => 'Operaciones', 'empleados.estatus' => 'activo'])
-                ->orderBy('nombre_completo', 'asc')
-                ->pluck('nombre_completo', 'id');
+
 
         $area = DB::table('personal.esquemas')
                 ->select('area')
@@ -787,7 +793,7 @@ class AdminController extends Controller {
 
         #dd($super, $area, $puesto, $camp, $usuario);
         //using pagination method
-        return view('admin.updateEmpleado', compact('user', 'super', 'coor', 'datosCandidato', 'DetalleEmpleado', 'Reclutador', 'analistaCalidad', 'teamLeader', 'usuario', 'datosemergencia', 'menu', 'coach', 'area', 'puesto', 'camp'));
+        return view('admin.updateEmpleado', compact('user', 'super', 'coor', 'datosCandidato', 'DetalleEmpleado', 'Reclutador', 'analistaCalidad', 'teamLeader', 'usuario', 'datosemergencia', 'menu', /*'coach', */ 'area', 'puesto', 'camp'));
     }
 
     public function pos($posi = '', $turno = '') {
@@ -1272,6 +1278,39 @@ class AdminController extends Controller {
                                         ->join('usuarios', 'usuarios.id', '=', 'empleados.id')
                                         ->join('candidatos', 'candidatos.id', '=', 'usuarios.id')
                                         ->where(['usuarios.active' => true, 'candidatos.puesto' => 'Gerente', 'candidatos.campaign' => 'TM Prepago', 'usuarios.area' => 'Operaciones'])
+                                        ->union($coor1)
+                                        ->orderBy('nombre_completo', 'asc')
+                                        ->get();
+                                return $coor;
+                                break;
+
+                            case 'Facebook Ventas':
+                                $coor1 = DB::table('empleados')
+                                        ->select('usuarios.id', 'empleados.nombre_completo')
+                                        ->join('usuarios', 'usuarios.id', '=', 'empleados.id')
+                                        ->where(['usuarios.active' => true, 'usuarios.puesto' => 'Director General', 'usuarios.area' => 'Direccion General']);
+
+                                $coor = DB::table('empleados')
+                                        ->select('usuarios.id', 'candidatos.nombre_completo')
+                                        ->join('usuarios', 'usuarios.id', '=', 'empleados.id')
+                                        ->join('candidatos', 'candidatos.id', '=', 'usuarios.id')
+                                        ->where(['usuarios.active' => true, 'candidatos.puesto' => 'Gerente', 'candidatos.campaign' => 'TM Prepago', 'usuarios.area' => 'Operaciones'])
+                                        ->union($coor1)
+                                        ->orderBy('nombre_completo', 'asc')
+                                        ->get();
+                                return $coor;
+                                break;
+                            case 'Ventas Facebook':
+                                $coor1 = DB::table('empleados')
+                                        ->select('usuarios.id', 'empleados.nombre_completo')
+                                        ->join('usuarios', 'usuarios.id', '=', 'empleados.id')
+                                        ->join('candidatos', 'candidatos.id', '=', 'usuarios.id')
+                                        ->where([['candidatos.puesto', '=', 'Supervisor'], ['candidatos.campaign', '=', 'TM Prepago'], 'usuarios.active' => true, 'usuarios.area' => 'Operaciones']);
+
+                                $coor = DB::table('empleados')
+                                        ->select('usuarios.id', 'empleados.nombre_completo')
+                                        ->join('usuarios', 'usuarios.id', '=', 'empleados.id')
+                                        ->where(['usuarios.active' => true, 'usuarios.puesto' => 'Director General'])
                                         ->union($coor1)
                                         ->orderBy('nombre_completo', 'asc')
                                         ->get();
@@ -2212,6 +2251,7 @@ class AdminController extends Controller {
     }
 
     public function ReporteAsistencia(Request $request) {
+        
         $nombre = 'Asistencia';
         Excel::create($nombre, function($excel) use($request) {
             $excel->sheet('asistencia', function($sheet) use($request) {
@@ -2228,7 +2268,7 @@ class AdminController extends Controller {
                     $area = '%';
                 }
                 $data = array();
-                $top = array("Empleado", "Nombre Completo", "Supervisor", "Area", "Puesto", "Campaña", "Turno", "Fecha de Ingreso", "Estatus");
+                $top = array("Empleado", "PC_tlmk",  "Nombre Completo", "Supervisor", "Area", "Puesto", "Campaña", "Turno", "Fecha de Ingreso", "Estatus");
                 $date = $request->inicio;
                 $end_date = $request->fin;
                 while (strtotime($date) <= strtotime($end_date)) {
@@ -2236,20 +2276,48 @@ class AdminController extends Controller {
                     $date = date("Y-m-d", strtotime("+1 day", strtotime($date)));
                 }
                 $data = array($top);
-                $empleados = DB::table('candidatos')
-                        ->select('candidatos.id', 'candidatos.nombre', 'candidatos.paterno', 'candidatos.materno', 'candidatos.nombre', 'candidatos.area', 'candidatos.puesto', 'emp.nombre_completo', 'candidatos.campaign', 'candidatos.turno', 'candidatos.fecha_capacitacion', DB::raw("if(usuarios.active=true,'Activo','Inactivo') as estatus"))
+
+                    /*$empleados = DB::table('candidatosa')
+                        ->select('candidatos.id', 'candidatos.nombre', 'candidatos.paterno', 'candidatos.materno', 'candidatos.nombre', 'candidatos.area', 'candidatos.puesto', 'emp.nombre_completo', 'candidatos.campaign', 'candidatos.turno', 'candidatos.fecha_capacitacion', DB::raw("if(usuarios.active=true,'Activo','Inactivo') as estatus"), 'empleados.user_ext')
                         ->join('usuarios', 'usuarios.id', '=', 'candidatos.id')
                         ->join('empleados', 'empleados.id', '=', 'usuarios.id')
                         ->leftjoin('empleados as emp', 'emp.id', '=', 'empleados.supervisor')
                         ->where([['candidatos.campaign', 'like', $campaign], ['candidatos.turno', 'like', $turno],
-                            ['candidatos.area', 'like', $area], 'usuarios.active' => true])
+                            ['candidatos.area', 'like', $area], 
+                            'usuarios.active' => true
+                            ])
                         #reporte de bajas por fecha y por dia de asistencia
                         #->whereBetween('empleados.fecha_baja', [$request->inicio, $request->fin])
                         ->get();
+                    */
+
+/*Esto estaba antes 2018-09-08
+                $empleados = DB::select( DB::raw("select `candidatos`.`id`, `candidatos`.`nombre`, `candidatos`.`paterno`, `candidatos`.`materno`, `candidatos`.`nombre`, `candidatos`.`area`, `candidatos`.`puesto`, `emp`.`nombre_completo`, `candidatos`.`campaign`, 
+                    `candidatos`.`turno`, `candidatos`.`fecha_capacitacion`, if(usuarios.active=true,'Activo','Inactivo') as estatus, 
+                    `empleados`.`user_ext`, empleados.fecha_baja 
+                    from `candidatos` inner join `usuarios` on `usuarios`.`id` = `candidatos`.`id` 
+                    inner join `empleados` on `empleados`.`id` = `usuarios`.`id` 
+                    left join `empleados` as `emp` on `emp`.`id` = `empleados`.`supervisor` 
+                    where (`candidatos`.`campaign` like '%' and `candidatos`.`turno` like '%' and `candidatos`.`area` like '%') 
+                    and (usuarios.active = true)")); #or `empleados`.`fecha_baja` between '$request->inicio' and '$request->fin')"));
+  */              
+
+
+                $empleados = DB::select( DB::raw("select `candidatos`.`id`, `candidatos`.`nombre`, `candidatos`.`paterno`, `candidatos`.`materno`, `candidatos`.`nombre`, `candidatos`.`area`, `candidatos`.`puesto`, `emp`.`nombre_completo`, `candidatos`.`campaign`, 
+                    `candidatos`.`turno`, `candidatos`.`fecha_capacitacion`, empleados.estatus as estatus, 
+                    `empleados`.`user_ext`, empleados.fecha_baja 
+                    from `candidatos` inner join `usuarios` on `usuarios`.`id` = `candidatos`.`id` 
+                    inner join `empleados` on `empleados`.`id` = `usuarios`.`id` 
+                    left join `empleados` as `emp` on `emp`.`id` = `empleados`.`supervisor` 
+                    where (`candidatos`.`campaign` like '%' and `candidatos`.`turno` like '%' and `candidatos`.`area` like '%') 
+                    and (usuarios.active = true)")); #or `empleados`.`fecha_baja` between '$request->inicio' and '$request->fin')"));
+
+                
 
                 foreach ($empleados as $value) {
                     $datos = array();
                     array_push($datos, $value->id);
+                    array_push($datos, $value->user_ext);
                     array_push($datos, $value->paterno . " " . $value->materno . " " . $value->nombre);
                     array_push($datos, $value->nombre_completo);
                     array_push($datos, $value->area);
@@ -2264,7 +2332,7 @@ class AdminController extends Controller {
                         $emp = DB::table('asistencias')
                                 ->select(DB::raw("empleado,time(created_at) as hora"))
                                 ->where('empleado', $value->id)
-                                ->wheredate('created_at', '=', $date)
+                                ->where('fecha', '=', $date)
                                 ->get();
                         $date = date("Y-m-d", strtotime("+1 day", strtotime($date)));
                         if ($emp) {
@@ -2282,8 +2350,9 @@ class AdminController extends Controller {
     }
 
     public function ReporteAsistenciaHistorico(Request $request) {
+        
         $nombre = 'Asistencia_Historico';
-        // dd('se');
+
         Excel::create($nombre, function($excel) use($request) {
             $excel->sheet('asistencia', function($sheet) use($request) {
 
@@ -2302,7 +2371,8 @@ class AdminController extends Controller {
                         ->join('usuarios', 'usuarios.id', '=', 'candidatos.id')
                         ->join('empleados', 'empleados.id', '=', 'usuarios.id')
                         ->leftjoin('empleados as emp', 'emp.id', '=', 'empleados.supervisor')
-                        ->where('usuarios.active', false)
+                        ->where('usuarios.active', true)
+                        ->whereNotIn('candidatos.id', [1608240004, 1610240064, 1611130008, 1612020001, 1705250006, 1707060001,1708180027,1708180028, 1801160001])
                         ->get();
                 foreach ($empleados as $value) {
                     $datos = array();
@@ -2338,6 +2408,7 @@ class AdminController extends Controller {
         })->export('xls');
     }
 
+
     function menu() {
         $puesto = session('puesto');
         switch ($puesto) {
@@ -2354,6 +2425,12 @@ class AdminController extends Controller {
             case 'Jefe de administracion': $menu = "layout.rh.admin";
                 break;
             case 'Jefe de Reclutamiento': $menu = "layout.rh.jefeRecluta";
+                break;
+            case 'Gerente de RRHH': $menu = "layout.recepcion.recepcion";
+                break;
+            case 'Asistente administrativo Jr': $menu = "layout.recepcion.recepcion";
+                break;
+            case 'Supervisor': $menu = "layout.recepcion.recepcion";
                 break;
             default: $menu = "layout.error.error";
                 break;

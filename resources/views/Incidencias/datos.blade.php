@@ -38,6 +38,7 @@
               'DefuncionDirecta' => 'Defuncion pariente directo',
               'DefuncionIndirecta' => 'Defuncion pariente indirecto',
               'Tramites' => 'Tramites',
+              'Retardo' => 'Retardo',
               'Otro'=>'Otro'],'', ['id'=>'area','required' => 'required', 'class'=>"form-control", 'placeholder'=>""]  ) }}
             </div>
         </div>
@@ -65,7 +66,7 @@
         <div class="form-group">
             {{ Form::label('Comprobante','',array('class'=>"col-sm-2 control-label")) }}
             <div class="col-sm-10">
-                {{ Form::file('thefile', ['class' => 'field','required' => 'required']) }}
+                {{ Form::file('thefile', ['class' => 'field']) }}
             </div>
         </div>
         <div class="form-group">

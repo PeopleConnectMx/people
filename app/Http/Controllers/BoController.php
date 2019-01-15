@@ -753,6 +753,7 @@ class BoController extends Controller {
         $menu = $this->menu();
     }
 
+
     public function Altas() {
         $menu = $this->menu();
         return view('bo.jefebo.sube_altas', compact('menu'));
@@ -774,6 +775,7 @@ class BoController extends Controller {
             DB::statement("call pc_mov_reportes.altas_bo()");
         }
     }
+
 
     public function periodoRepMarcacion() {
         return view('bo.reportes.reporteMarcacionFechas');
@@ -929,7 +931,6 @@ class BoController extends Controller {
 
         switch ($campa) {
             case 'TM Prepago':
-
                 if (session('puesto') == 'Analista de BO (WhatsApp)') {
                     $id = session('user');
                     $fecha = date('Y-m-d');
@@ -955,9 +956,9 @@ class BoController extends Controller {
                             ->where($match)
                             #->Where([['us_p1','<>','']])
                             ->get();
-
                 } else {
-
+##aqui esta el proceso 1 de BO       
+#$geshoy los registros que le aparecen a agente de BO             
                     $id = session('user');
                     $fecha = date('Y-m-d');
                     $nuevafecha = strtotime('-1 day', strtotime($fecha));
@@ -978,21 +979,25 @@ class BoController extends Controller {
                             ->whereDate('hist_ges_bos.created_at', '=', date('Y-m-d'))
                             ->groupBy('hist_ges_bos.estatus')
                             ->get();
-
-                    // $news = TmPreBo::select('*')
-                    // ->where($match)
-                    //             ->orWhere(['fecha' => $fecha])
-                    //             ->get();
-                    $news = TmPreBo::select('*')
+#AQUI TENGO QUE METER TODO
+                    $news = DB::table('tm_pre_bos') 
+                            #TmPreBo::select('*')
+                            ->select('tm_pre_bos.dn as dn1', 'tm_pre_bos.tipificar as tipificar1', 'tm_pre_bos.estatus as estatus1', 'tm_pre_bos.actualizacion as actualizacion1', 'tm_pre_bos.fecha as fecha1', 'tm_pre_bos.hora as hora1', 'tm_pre_bos.usuario as usuario1', 'tm_pre_bos.alta as alta1', 'tm_pre_bos.activacion as activacion1', 'tm_pre_bos.created_at as created_at1', 'tm_pre_bos.updated_at as updated_at1', 'tm_pre_bos.ac_interno as ac_interno1', 'tm_pre_bos.st_interno as st_interno1', 'tm_pre_bos.us_p1 as us_p11', 'tm_pre_bos.us_p2 as us_p21', 'tm_pre_bos.intentos as intentos1', 'tm_pre_bos.us_wa1 as us_wa11', 'pre_dw.tipo as tipo2', 'pre_dw.fecha as fecha2', 'pre_dw.hora as hora2', 'pre_dw.dn as dn2', 'pre_dw.usuario as usuario2', 'pre_dw.nombre as nombre2', 'pre_dw.cod as cod2', 'pre_dw.validador as validador2', 'pre_dw.tipificar as tipificar2', 'pre_dw.fecha_val as fecha_val2', 'pre_dw.hora_val as hora_val2', 'pre_dw.ctel1 as ctel12', 'pre_dw.ctel2 as ctel22', 'pre_dw.bo_tipificar as bo_tipificar2', 'pre_dw.fecha_boac as fecha_boac2', 'pre_dw.hora_boac as hora_boac2', 'pre_dw.fecha_alta as fecha_alta2', 'pre_dw.ff as ff2', 'pre_dw.ff_val as ff_val2', 'pre_dw.submotivos as submotivos2', 'pre_dw.nombre_cliente as nombre_cliente2', 'pre_dw.usval as usval2', 'pre_dw.sexo as sexo2', 'pre_dw.cac as cac2', 'pre_dw.curp as curp2', 'pre_dw.fecha_hora_val as fecha_hora_val2', 'hist_ges_bos.obs as obs')
+                            ->join('pc_mov_reportes.pre_dw', 'tm_pre_bos.dn', '=', 'pre_dw.dn' )
+                            ->leftJoin('pc.hist_ges_bos', 'tm_pre_bos.dn', '=', 'hist_ges_bos.dn' )
                             ->where($match)
+							->groupBy('tm_pre_bos.dn')
+                            ->orderBy('tm_pre_bos.actualizacion', 'desc')
                             // ->Where(['dn'=>5571758525])
                             ->get();
+#aqui termina el proceso 1 de bo                            
+
                 }
-
-                // dd($news);
-
+                #dd($news, $geshoy);
                 return view('bo.bon', compact('news', 'geshoy'));
+
                 break;
+
             case 'TM Pospago':
                 if (session('puesto') == 'Analista de BO (WhatsApp)') {
                     $id = session('user');
@@ -1104,6 +1109,7 @@ class BoController extends Controller {
                         ->groupBy('hist_ges_bos.estatus')
                         ->get();
                 #->pluck('nombre_completo', 'id');
+                
 
                 return view('bo.bov', compact('news', 'geshoy'));
                 break;
@@ -1208,7 +1214,6 @@ class BoController extends Controller {
     }
 
     public function GesNuevos($value = '') {
-
         $menu = $this->menu();
         $dn = $value;
         $campa = session('campaign');
@@ -1242,13 +1247,17 @@ class BoController extends Controller {
                             ->get();
 
                 } else {
-                  #aqui
+#aqui visualiza los datos de proceso 1 de BO
+                    #tabla de pc.tm_pre_bos
                     $reg = TmPreBo::where(['dn' => $value])
                             ->get();
+
                     /* $ulr="http://192.168.10.14/ws/public/reporte/$value";
                       $json = file_get_contents($ulr);
                       $venta=json_decode($json); */
+#preDW se obtiene el nombre del cliente
                     $venta = PreDw::where('dn', $value)->get(); #dd($venta);
+
                     $hist = HistGesBo::where('dn', $value)->get();
                     $str_hist = "";
                     foreach ($hist as $key => $value) {
@@ -1267,6 +1276,9 @@ class BoController extends Controller {
                             ->select()
                             ->where(['dn' => $value])
                             ->get();
+
+                    #dd($reg, $venta, $hist,  $str_hist, $geshoy, $mensaje);
+#termina el proceso 1 de BO
                 }
                 /*
                   SELECT a.dn, a.nombre_cliente, concat(if(sexo='Masculino','Estimado','Estimada'),' ', a.nombre_cliente, ' te esperamos el dia ',
@@ -1275,6 +1287,7 @@ class BoController extends Controller {
                   where b.us_p1 <> '' ;
                  */
 
+                
 
                 if (empty($str_hist))
                     $str_hist = '';
@@ -1376,7 +1389,12 @@ class BoController extends Controller {
                 // $nuevo_registro->estatus=$request->estatus_r1;
                 // $nuevo_registro->estatus=$request->estatus_r2;
                 $nuevo_registro->estatus_facebook = $request->estatus_face;
-                $nuevo_registro->obs = $request->observaciones;
+                if ($request->observaciones == null || $request->observaciones == "") {
+                    #$nuevo_registro->obs = "";
+                }else{
+                    $nuevo_registro->obs = $request->observaciones;
+                }
+                
                 $nuevo_registro->numprocess = '1';
                 $nuevo_registro->invitacion = $request->invitacion;
                 $nuevo_registro->fecha = date('Y-m-d');
@@ -1966,8 +1984,9 @@ class BoController extends Controller {
           $cont_pro1=0;
           $cont_pro2=0;
           $cont_prowa=0;
-          DB::statement('call pc_mov_reportes.stgBo()');
-          DB::statement('call pc.up_bo()');
+          #DB::statement('call pc.up_bo()');
+          #DB::statement('call pc_mov_reportes.stgBo()');          
+          
           foreach ($datos as $key => $value) {
             if($request[$value->id]==1){
               $cont_pro1++;
@@ -1979,8 +1998,10 @@ class BoController extends Controller {
               $cont_prowa++;
             }
           }
+
           DB::table('tm_pre_bos')
             ->update(['us_p1'=>'','us_p2'=>'','us_wa1'=>'']);
+
           if(date('N')==1 || date('N')==2 || date('N')==3){
             if(date('H:i:s')<'17:00:00'){
               // Proceso 1
@@ -2319,8 +2340,8 @@ class BoController extends Controller {
       $cont_pro1Pos=0;
       $cont_pro2Pos=0;
       $cont_prowaPos=0;
-      DB::statement('call pc_mov_reportes.stgBoPos()');
-      DB::statement('call pc.up_bo_pos()');
+      #DB::statement('call pc_mov_reportes.stgBoPos()');
+      #DB::statement('call pc.up_bo_pos()');
       foreach ($datosPos as $keyPos2 => $valuePos) {
         if($request[$valuePos->id]==1){
           $cont_pro1Pos++;
@@ -2656,16 +2677,16 @@ class BoController extends Controller {
         $mensajePos=[];
         DB::table('pospago.mensaje_bo_pos')
           ->delete();
-        $mensajeDatosPos=DB::table('pc_mov_reportes.pos_dw as a')
+        /* $mensajeDatosPos=DB::table('pc_mov_reportes.pos_dw as a')
                    ->select('a.dn','a.nombre_cliente',
                    DB::raw("concat(if(sexo='Masculino','Estimado','Estimada'),' ', a.nombre_cliente, ' te esperamos el dia ',
                    date_add(date(b.actualizacion), interval 2 day), ' en ',  a.cac, ' no te quedes incomunicado.') as mensaje"))
                    ->join('pc.tm_pos_bos as b','a.dn','=','b.dn')
                    ->where([['b.us_p1','<>','']])
-                   ->get();
-          foreach ($mensajeDatosPos as $keyPos => $valuePos) {
+                   ->get();*/
+          /*foreach ($mensajeDatosPos as $keyPos => $valuePos) {
             $mensajePos[]=['dn'=>$valuePos->dn,'nombre_cliente'=>$valuePos->nombre_cliente,'mensaje'=>$valuePos->mensaje];
-          }
+          }*/
           DB::table('pospago.mensaje_bo_pos')->insert($mensajePos);
       /*--------------------------- Fin TM Pospago -----------------------------------------*/
       return view('bo.base.confirm',compact('menu'));
@@ -2698,6 +2719,31 @@ class BoController extends Controller {
       })->download('csv');
     }
 
+    public function InicioIngreso()
+    {
+        $menu=$this->menu();
+        return view('bo.jefebo.InicioIngresos', compact('menu'));
+    }
+
+    public function subeArchivoIngresos(Request $request){
+
+        $archivo_venta=$request->file('archivo_venta');
+        $nombre_venta=$request->file('archivo_venta')->getClientOriginalName();
+        $contenido_venta=\File::get($archivo_venta);
+
+
+        $query = sprintf("LOAD DATA local INFILE '%s' INTO TABLE pc_mov_reportes.pre_ingresos FIELDS TERMINATED BY '\\t' lines terminated by '\\n' ignore 1 lines", addslashes($archivo_venta));
+        DB::connection()->getpdo()->exec($query);
+
+        DB::connection()->getpdo()->exec("call pc_mov_reportes.stgBo()");
+
+        DB::connection()->getpdo()->exec("call pc.up_bo()");
+
+        DB::connection()->getpdo()->exec("call pc.stg_bo()");
+
+        #dd($new);
+        return redirect('/bo/subeArchivoIngresos');
+    }
     public function menu() {
         $campa = session('campaign');
         switch (session('puesto')) {
@@ -2710,6 +2756,8 @@ class BoController extends Controller {
             case 'Supervisor': $menu = "layout.Inbursa.coordinador";
                 break;
             case 'Gerente': $menu = "layout.gerente.gerente";
+                break;
+            case 'Programador 1': $menu = "layout.sistemas.index";
                 break;
             case 'Analista de BO':
                 switch ($campa) {

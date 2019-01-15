@@ -28,11 +28,13 @@ class Admin
                 || (Session('puesto') == 'Gerente')
                 || (Session('puesto') == 'Coordinador' )
                 || (Session('puesto') == 'Nominista' )
-                || (Session('puesto') == 'Coordinador de reclutamiento') )) {
+                || (Session('puesto') == 'Gerente de RRHH' )
+                || (Session('puesto') == 'Coordinador de reclutamiento')
+                || (Session('puesto') == 'Asistente administrativo Jr')  )) {
             return $next($request);
         }
         else{
-            return redirect('/Banamex');
+            return redirect('/');
         }
 
     }

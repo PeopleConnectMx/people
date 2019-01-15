@@ -126,7 +126,8 @@ class CalidadPreController extends Controller {
                         ->join('empleados as e', 'e.id', '=', 'c.id')
                         ->join('detalle_empleados as d', 'd.id', '=', 'c.id')
                         ->leftjoin('empleados as e2', 'e2.id', '=', 'e.supervisor')
-                        ->where(['u.active' => true, 'c.puesto' => 'Operador de Call Center', 'd.analistaCalidad' => $user['user']])
+                        ->where(['u.active' => true, 'c.puesto' => 'Operador de Call Center'])
+                            #, 'd.analistaCalidad' => $user['user']
                         ->get();
 
                 $ConsultaVph = PreDw::select('usuario', 'fecha_val', DB::raw("count(fecha_val) as total"))

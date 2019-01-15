@@ -27,9 +27,9 @@ class InbursaVidatelController extends Controller
       $states= Cps::lists('estado','clave_edo');
     return view('InbursaVidatel.agente.InbForm',compact('states'));
   }
-  
+
   //prueba json by eymmy inicio
-  
+
   public function JsonVentasVidatel(){
       $fecha = getdate();
       //$dia = $fecha[yday]+1;
@@ -42,7 +42,7 @@ class InbursaVidatelController extends Controller
 
         return $datos;
     }
-  
+
   //prueba json by eymmy inicio
 
   public function municipios($id)
@@ -127,6 +127,7 @@ public function FromularioInbVidatel(Request $request)
       // $venta->ref_1=$request->ref_1_num. " " .$request->ref_1_tel. "" .strtoupper(strtr($request->ref_1_com,$acentos));
       $venta->ref_2=strtoupper(strtr($request->ref_2,$acentos));
       $venta->rvt=strtoupper(strtr($request->rvt,$acentos));
+      $venta->rvt_real=strtoupper(strtr($request->rvt,$acentos));
       $venta->turno=strtoupper($request->turno);
       $venta->hora_ini=$request->hora_ini;
       $venta->hora_fin=date('h:i:s');
@@ -324,6 +325,29 @@ public function validadores2(Request $request){
 //   })->export('xls');
 // }
 
+
+  public function datosEmpresa(){
+
+    $datos = DB::table('inbursa_vidatel.base')
+      ->where([['venta', '=', null],
+              ['marcado', '=', null],
+              ['nunca', '=', null],
+              ['num_base', '=', 2]
+            ])
+      ->limit('1')
+      ->orderByRaw("rand()")
+      ->get();
+
+
+      DB::table('inbursa_vidatel.base')
+          ->where('idbase', '=', $datos[0]->idbase)
+          ->update(['marcado' => 1]);
+
+      return view('InbursaVidatel.agente.datos', compact('datos'));
+
+  }
+
+
     public function DatosLlamada($value=''){
       #dd(phpinfo());
       #dd(session('extension'));
@@ -340,8 +364,8 @@ public function validadores2(Request $request){
       $inbursa_st2=InbursaRules::where('callid',$inbursa[0]['callid'])->get();
 
 
-      try {
 
+      try {
         $contacto= InbursaRulesContactos::select()
         ->where('numero',$inbursa_st2[0]['data2'])
         ->limit(1)

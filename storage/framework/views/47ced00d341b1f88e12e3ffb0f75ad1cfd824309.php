@@ -32,7 +32,9 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="<?php echo e(url('inbursa')); ?>">Reportes Inbursa</a></li>
                                 <li><a href="<?php echo e(url('/InbursaVidatel/reportes')); ?>">Reportes Vidatel</a></li>
+                                <li><a href="<?php echo e(url('/Inbursa_soluciones/reportes')); ?>">Reportes Soluciones</a></li>
                                 <!--<li><a href="<?php echo e(url('prepago/supervisor')); ?>">Cambiar rango de fecha</a></li>-->
+
                                 <li><a href="<?php echo e(url('prepago/supervisor/plantilla')); ?>">Plantilla</a></li>
                                 <li><a href="<?php echo e(url('prepago/supervisor/Asistencia')); ?>">Pase de Asistencia</a></li>
                                 <li><a href="<?php echo e(url('prepago/supervisor/AsistenciaDatos')); ?>">Asistencia</a></li>

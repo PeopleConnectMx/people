@@ -520,14 +520,21 @@ class RhController extends Controller {
 
     public function Inicio() {
         $menu = $this->menu();
+        
         $reclutadores = DB::table('candidatos')
                 ->select('candidatos.id', 'candidatos.nombre_completo')
                 ->join('usuarios', 'usuarios.id', '=', 'candidatos.id')
-                ->where(['usuarios.active' => true, 'candidatos.area' => 'Reclutamiento', 'candidatos.puesto' => 'Ejecutivo de cuenta'])
+                ->where(['usuarios.active' => true, 'candidatos.area' => 'Reclutamiento'])
                 ->orderBy('candidatos.nombre_completo', 'asc')
                 ->pluck('candidatos.nombre_completo', 'candidatos.id');
+/*
+        $reclutadores['1704040015'] = 'Espinosa Mendoza Evelin Rosario';
+        $reclutadores['1609070018'] = 'Rivas Salazar Julio';
+        $reclutadores['1710170001'] = 'Gomez Ramirez Luis Arturo';
+        $reclutadores['1809010031'] = 'Access Human';
 
-        $reclutadores['1611130005'] = 'Alma Nayeli Tolentino Morales';
+*/
+
         return view('rh.reclutamiento.candidato', compact('reclutadores', 'menu'));
     }
 
@@ -1132,7 +1139,12 @@ class RhController extends Controller {
         $histCandida->bono_calidad = $request->bonoCalidad;
         $histCandida->bono_productividad = $request->bonoProductividad;
         $histCandida->resultado_cita = $request->resultadoCita;
-        $histCandida->fecha_capacitacion = $request->fechaCapacitacion;
+        if ($request->fechaCapacitacion != null) {
+            $histCandida->fecha_capacitacion = $request->fechaCapacitacion;
+        }else{
+            $histCandida->fecha_capacitacion = 0;
+        }
+        
         $histCandida->estado_capacitacion = $request->estadoCapacitacion;
         $histCandida->nombre_capacitador = $request->nombreCapacitador;
         $histCandida->tipo_contrato = $request->tipo_contrato;
@@ -1483,7 +1495,8 @@ class RhController extends Controller {
                 break;
             case 'Ejecutivo de cuenta entrevistas Sr': $menu = "layout.rh.captura";
                 break;
-            case 'Asistente Administrativo Jr': $menu = "layout.rh.captura";
+            #case 'Asistente administrativo Jr': $menu = "layout.rh.captura";
+            case 'Asistente administrativo Jr': $menu = "layout.gerente.gerenteRH";
                 break;
             case 'Asistente Administrativo Sr': $menu = "layout.rh.captura";
                 break;

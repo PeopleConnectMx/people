@@ -173,7 +173,7 @@
 
                     <div class="col-sm-10">
                         <?php echo e(Form::select('sucursal', [
-                        'Zapata'=>'Zapata'],
+                        'Sevilla'=>'Sevilla'],
                         $datosCandidato[0]->sucursal, ['required' => 'required','class'=>"form-control", 'placeholder'=>""]  )); ?>
 
                     </div>
@@ -202,7 +202,8 @@
                         'Inactivo' => 'Inactivo',
                         'Activo' => 'Activo',
                         'Capacitación' => 'Capacitación',
-                        'Candidato' => 'Candidato'],
+                        'Candidato' => 'Candidato',
+                        'Fantasma' => 'Fantasma'],
                     $user[0]->estatus, ['required' => 'required', 'class'=>"form-control", 'placeholder'=>""]  )); ?>
 
                     </div>
@@ -310,6 +311,8 @@
                         'Faltas' => 'Faltas',
                         'Baja Productividad' => 'Baja Productividad',
                         'Renuncia Voluntaria' => 'Renuncia Voluntaria',
+                        'Escolar' => 'Escolar',
+                        'Personal' => 'Personal',
                         'Faltas Por Incapacidad' => 'Faltas Por Incapacidad',
                         'Mejor Oferta Laboral' => 'Mejor Oferta Laboral',
                         'Fin de Campaña' => 'Fin de Campaña'],

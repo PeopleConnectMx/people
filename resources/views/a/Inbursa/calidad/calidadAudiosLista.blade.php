@@ -9,7 +9,7 @@
     <table class="table table-striped table-hover ">
       <thead>
         <tr>
-          <th>Folio</th>
+          <th>Folios</th>
           <th>Telefono</th>
           <th>Fecha de venta</th>
           <th>Editor</th>

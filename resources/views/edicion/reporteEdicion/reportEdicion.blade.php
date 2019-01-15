@@ -34,8 +34,9 @@
                     {{ Form::label('Campaña','',array('class'=>"col-sm-2 control-label")) }}
                     <div class="col-sm-10">
                         {{ Form::select('campaign', [
-                        'Inbursa' => 'Inbursa',
-                        'Mapfre'=>'Mapfre'],
+                            'Inbursa' => 'Inbursa',
+                            'Mapfre'=>'Mapfre',
+                            'Soluciones'=>'Soluciones'],
                     null, ['class'=>"form-control", 'placeholder'=>"",'required' => 'required']  ) }}
                     </div>
                 </div>

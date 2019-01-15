@@ -23,22 +23,26 @@
                     <tbody>
                     <?php $num =0; ?>
                     <?php foreach ($datos as $key => $value): ?>
-                        <tr >
-                            <td><?php echo e($num+=1); ?> </td>
-                            <td><?php echo e($value -> rvt); ?> </td>
-                            <td> <a href="<?php echo e(url('edicion3/'.$value -> telefono.'/'.$value -> fecha_capt.'/'.$value -> id.'/'.$value->estatusSubido )); ?>"><?php echo e($value -> telefono); ?> </a></td>
-                            <td> <?php echo e($value -> fecha_capt); ?> </td>
-                            <td> <?php echo e($value -> estatus_people_2); ?> </td>
-                            <td> <?php echo e($value -> estatusSubido); ?> </td>
+						<?php if(!$value -> subido): ?>
+							<tr >
+								<td><?php echo e($num+=1); ?> </td>
+								<td><?php echo e($value -> rvt); ?> </td>
+								<td> <a href="<?php echo e(url('edicion3/'.$value -> telefono.'/'.$value -> fecha_capt.'/'.$value -> id.'/'.$value->estatusSubido )); ?>"><?php echo e($value -> telefono); ?> </a></td>
+								<td> <?php echo e($value -> fecha_capt); ?> </td>
+								<td> <?php echo e($value -> estatus_people_2); ?> </td>
+								<td> <?php echo e($value -> estatusSubido); ?> </td>
 
-                            <td>
-                                <?php if( !$value -> subido): ?>
-                                    No
-                                <?php else: ?>
-                                    Si
-                                <?php endif; ?>
-                            </td>
-                        </tr>
+								<td>
+									<?php if( !$value -> subido): ?>
+										No
+									<?php else: ?>
+										Si
+									<?php endif; ?>
+								</td>
+							</tr>
+						<?php else: ?> 
+                        
+                        <?php endif; ?>
                     <?php endforeach ?>
                     </tbody>
                 </table>

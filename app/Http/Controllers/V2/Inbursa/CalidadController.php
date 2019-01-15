@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Model\InbursaVidatel\InbursaVidatel;
+use App\Model\InbursaSoluciones\Inbursa_Soluciones;
 use App\Model\CalidadVentas;
 use DB;
 use Illuminate\Support\Facades\Storage;
@@ -31,13 +32,16 @@ class CalidadController extends Controller{
     ->leftJoin('pc.calidad_audios', 'calidad_audios.dn', '=', 'ventas_inbursa_vidatel.telefono')
     ->whereNull('calidad_audios.dn')
     ->get();
+    
     return view('a.Inbursa.calidad.calidadAudiosLista', compact('info'));
   }
 
   public function VerAudios($id='')
   {
+    
     $path='';
     $info=[];
+    $nombre_audio;
 
   //   $info=InbursaVidatel::where([
   //     'id'=>$id
@@ -65,23 +69,23 @@ class CalidadController extends Controller{
       ])
       ->get();
       #dd($info);
+      
       $anio=date("Y",strtotime($info[0]->fechaSubido));
       $mes=date("m",strtotime($info[0]->fechaSubido));
       $dia=date("d",strtotime($info[0]->fechaSubido));
 
-
+        
       $nombre_audio=$this->findfile($anio,$mes,$dia,$info[0]->telefono);
       
       #dd($nombre_audio);
       $path=asset("/inburVidatelAudios/$anio/$mes/$dia");
       $nombre_audio=='' ? $path='' : $path=$nombre_audio;
 
-
     } catch (\Exception $e) {
-
-
+      
     }
-    #dd($path);
+    
+    
     return view('a.Inbursa.calidad.calidadAudiosVer', compact('info','path'));
 
   }
@@ -273,9 +277,69 @@ class CalidadController extends Controller{
       } catch (\Exception $e) {
           $audios = '';
       }
+      
+    return $audios;
+    
+  }
+  
+  #SOLUCIONES
+  
+  function findfileSoluciones($anio, $mes, $dia, $telefono) {
+      $audios = '';
+      #dd("hola",asset("/inburVidatelAudios/$anio/$mes/$dia"));
+      #dd("hola");
+      $public_path = public_path();
+
+      $url = $public_path.'\inbursaSolucioneslAudios\\'.$anio.'\\'.$mes.'\\'.$dia;
+      $files = \File::allFiles($url);
+      dd($url,$files);
+
+      try {
+          #$location = file_get_contents(asset("/inburVidatelAudios/$anio/$mes/$dia"), 'r');
+          #$location = explode("\n", $location);
+
+          $public_path = public_path();
+
+          $url = $public_path.'\inbursaSolucioneslAudios\\'.$anio.'\\'.$mes.'\\'.$dia;
+          $files = \File::allFiles($url);
+          #dd($url,$files);
+
+        foreach ($files as $value) {
+          $audioName=(string)$value;
+          $pos = strpos($audioName, $telefono);
+
+              if ($pos === false) {
+                  #
+              } else {
+
+                  $cadena = substr($audioName, 8);
+                  $posicionsubcadena = strpos($audioName, ".wav");
+                  $dominio = substr($audioName, ($posicionsubcadena));
+                  $x = str_replace($dominio, ".wav", $audioName);
+
+                  if ($posicionsubcadena === false) {
+                    $posicionsubcadena = strpos($audioName, ".mp3");
+                    $dominio = substr($audioName, ($posicionsubcadena));
+                    $x = str_replace($dominio, ".mp3", $audioName);
+                  }
+
+                  // $dominio = substr($audioName, ($posicionsubcadena));
+                  // $x = str_replace($dominio, ".wav", $audioName);
+                  $url=$url.'\\';
+                  $x = str_replace($url, "", $x);
+                  #dd($x);
+                  #array_push($audios, $x);
+                  $audios=asset("/inbursaSolucioneslAudios/$anio/$mes/$dia").'/'.$x;
+              }
+          }
+      } catch (\Exception $e) {
+          $audios = '';
+      }
       #dd($audios);
     return $audios;
   }
+  
+  #soluciones
 
   function findfileVentas($anio, $mes, $dia, $telefono) {
       $audios = [];
@@ -308,4 +372,128 @@ class CalidadController extends Controller{
 
   }
 
+  #soluciones
+   public function InicioAudiosSoluciones($value='')
+  {
+    return view('a.Soluciones.calidad.calidadAudiosInicio');
+  }
+  
+  public function ListaAudiosSoluciones(Request $request)
+  {
+    
+
+    $info=Inbursa_Soluciones::where([
+      'estatus_people_2'=>'Venta',
+      ['fecha_capt','>','2017-10-01'],
+      ['estatusSubido','<>','0'],
+      'fechaSubido'=>$request->fecha
+    ])
+    ->leftJoin('pc.calidad_audios', 'calidad_audios.dn', '=', 'ventas_soluciones.telefono')
+    ->whereNull('calidad_audios.dn')
+    ->get();
+
+    
+    return view('a.Soluciones.calidad.calidadAudiosLista', compact('info'));
+  }
+  
+  public function VerAudiosSoluciones($id='')
+  {
+    $path='';
+    $info=[];
+
+  //   $info=InbursaVidatel::where([
+  //     'id'=>$id
+  //   ])
+  //   ->get();
+  //
+  //   $public_path = public_path();
+  //
+  //   $anio=date("Y",strtotime($info[0]->fecha_capt));
+  //   $mes=date("m",strtotime($info[0]->fecha_capt));
+  //   $dia=date("d",strtotime($info[0]->fecha_capt));
+  //
+  //   $url = $public_path.'\inburVidatelAudios\\'.$anio.'\\'.$mes.'\\'.$dia;
+  //   $files = \File::allFiles($url);
+  //
+  //
+  // foreach ($files as $value) {
+  //
+  //   dd( (string)$value);
+  // }
+
+    try {
+      $info=Inbursa_Soluciones::where([
+        'id'=>$id
+      ])
+      ->get();
+      #dd($info);
+      $anio=date("Y",strtotime($info[0]->fechasubido));
+      $mes=date("m",strtotime($info[0]->fechasubido));
+      $dia=date("d",strtotime($info[0]->fechasubido));
+      #dd($info[0]->fechasubido,$info[0]->telefono);
+      #dd($anio,$mes,$dia,$info[0]->telefono);
+
+
+      $nombre_audio=$this->findfileSoluciones($anio,$mes,$dia,$info[0]->telefono);
+      
+      #dd($nombre_audio);
+      $path=asset("/inbursaSolucioneslAudios/$anio/$mes/$dia");
+      $nombre_audio=='' ? $path='' : $path=$nombre_audio;
+
+
+    } catch (\Exception $e) {
+
+    }
+    #dd($path);
+    return view('a.Soluciones.calidad.calidadAudiosVer', compact('info','path'));
+
+  }
+  
+  public function CalidadAudiosGuardarSoluciones(Request $request){
+    $hoy = date("Y-m-d H:i:s");
+
+    $auditor = DB::table('candidatos')
+        ->select('nombre_completo')
+        ->where('id', $request->auditor)
+        ->get();
+
+    $editor = DB::table('candidatos')
+        ->select('nombre_completo')
+        ->where('id', $request->editor)
+        ->get();
+    $request->error == 'Si' ? $err=0 : $err=0;
+    $request->saludo == 'Si' ? $sal=5 : $sal=0;
+    $request->script == 'Si' ? $scr=40 : $scr=0;
+    $request->objeciones == 'Si' ? $objecion=30 : $objecion=0;
+    $request->cierre == 'Si' ? $cerrar=20 : $cerrar=0;
+    $request->despedida == 'Si' ? $desp=5 : $desp=0;
+
+    $calificacion = $err+$sal+$scr+$objecion+$cerrar+$desp;
+
+    $valores = array('fecha' => $hoy,
+                      'dn' => $request->dn,
+                      'fecha_venta' => $request->fechaVenta,
+                      'nombre_auditor'=> $auditor[0]->nombre_completo,
+                      'campania'=> $request->campania,
+                      'nombre_editor'=> $editor[0]->nombre_completo,
+                      'saludo'=> $request->saludo,
+                      'script'=> $request->script,
+                      'objeciones'=> $request->objeciones,
+                      'cierre_venta'=> $request->cierre,
+                      'despedida'=> $request->despedida,
+                      'error'=> $request->error,
+                      'motivo_error'=> $request->errorMotivo,
+                      'observaciones'=> $request->observaciones,
+                      'id_editor'=> $request->editor,
+                      'id_auditor'=> $request->auditor,
+                      'calificacion'=>$calificacion
+                    );
+
+
+    DB::table('calidad_audios')->insert($valores);
+
+    return view('a.Soluciones.calidad.calidadAudiosInicio');
+
+  }
+  
 }

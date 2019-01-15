@@ -44,7 +44,7 @@ class LoginController extends Controller {
 
     public function NewSession(Request $request) {
         if ($user = Usuario::find($request->id)) {
-            if ($user->active == true || $user->fantasma == true) {
+            if ($user->active == true) {
                 if (Hash::check($request->password, $user->password)) {
                     if ($request->password == '123456') {
                         return redirect('update/password/' . $request->id);
@@ -95,7 +95,6 @@ class LoginController extends Controller {
   //                             session('turno'), $emple[0]->grupo, $vistaUser);
 
                         #if($vistaUser[0]->vista == '' || $vistaUser[0]->vista == null || $vistaUser = ''){
-
 
 
 
@@ -161,6 +160,7 @@ class LoginController extends Controller {
                 return redirect('/Mapfre');
             }
         } else {
+
             if ($user = ActiveUser::find(session('user'))) {
                 $user->delete();
                 Session::flush();

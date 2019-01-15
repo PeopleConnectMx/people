@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class InbursaRulesContactos extends Model
 {
   protected $connection = 'mysql_rules2';
-  protected $table = 'inbursa';
+  protected $table = 'vidatel';
 }

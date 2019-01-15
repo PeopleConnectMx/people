@@ -49,6 +49,7 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Reportes<span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ url('/Administracion/admin/asistencia') }}">Reporte asistencia</a></li>
+                                    <li><a href="{{ url('/Administracion/asistenciaHistorico') }}">Reporte Historico Asistencias</a></li>
                                     <li><a href="{{ url('/Administracion/root/asistencias_bajas') }}">Reporte asistencia inactivos</a></li>
                                     <li><a href="{{ url('Administracion/ReportBaja') }}">Reporte bajas</a></li>
                                     <li><a href="{{ url('/capacitacionRoot') }}">Reporte de Capacitacion</a></li>
@@ -98,11 +99,13 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Facebook<span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ url('/reportesfacebook') }}">Ventas Hoy</a></li>
-                                    <li><a href="{{ url('/reportesfacebook/filtro') }}">Reporte por Filtro</a></li>
+                                    <li><a href="{{ url('reportesVentasFB') }}">Reporte Ventas FB</a></li>
+                                    <li><a href="{{ url('reportesOperadorVentasFB') }}">Reporte por Operador Ventas FB</a></li>
+                                    <!-- <li><a href="{{ url('/reportesfacebook') }}">Ventas Hoy</a></li>
+                                    <li><a href="{{ url('/reportesfacebook/filtro') }}">Reporte por Filtro</a></li> -->
                                     <!-- <li><a href="{{ url('/ventasAgentesFacebook') }}">Ventas Facebook</a></li>
                                     <li><a href="{{ url('/ventasRealesFacebook') }}">Ventas Reales</a></li> -->
-                                    <li><a href="{{ url('/reportesfacebookventasdif') }}">Ventas No Reales</a></li>
+                                    <!-- <li><a href="{{ url('/reportesfacebookventasdif') }}">Ventas No Reales</a></li> -->
                                     <!-- <li><a href="{{ url('/reportesfacebookventas') }}">Ventas facebook-Telemarketing</a></li> -->
                                 </ul>
                             </li>

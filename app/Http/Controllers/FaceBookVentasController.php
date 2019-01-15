@@ -68,6 +68,7 @@ class FaceBookVentasController extends Controller {
         $datos = DB::table('ventas_facebooks as f')
                 ->select('f.id', 'e.nombre_completo', 'f.paterno', 'f.materno', 'f.nombre', 'f.dn', 'f.sipdv')
                 ->leftjoin('empleados as e', 'f.operador', '=', 'e.id')
+                ->where(['fecha' => '2018-03-06'])
                 ->get();
         return view('facebook.vista.vista', compact('datos', 'menu'));
     }
@@ -103,6 +104,7 @@ class FaceBookVentasController extends Controller {
                 ->select('f.id', 'e.nombre_completo', 'f.paterno', 'f.materno', 'f.nombre', 'f.dn', 'f.sipdv', 'f.estatus')
                 ->leftjoin('empleados as e', 'f.operador', '=', 'e.id')
                 ->where(['f.operador_encuesta' => '', 'f.visto' => '', 'f.sipdv' => 'Prospecto'])
+                ->where('fecha', '>', '2018-03-06')
                 ->get();
         return view('facebook.vista.vistaValida', compact('datos', 'menu'));
     }
@@ -114,6 +116,7 @@ class FaceBookVentasController extends Controller {
                 ->leftjoin('empleados as e', 'f.operador', '=', 'e.id')
                 ->leftjoin('empleados as e2', 'f.operador_encuesta', '=', 'e2.id')
                 ->where('f.visto', '<>', '')
+                ->where('fecha', '>', '2018-03-06')
                 ->get();
         return view('facebook.vista.vistaValidaTotal', compact('datos', 'menu'));
     }
@@ -559,4 +562,239 @@ class FaceBookVentasController extends Controller {
         return $menu;
     }
 
+
+    public function InicioChat(){
+        $agentes = DB::table('pc.usuarios as a')
+            ->select('a.id', 'b.nombre_completo')
+            ->join("candidatos as b", "a.id", "=", "b.id")
+            ->where([["a.puesto", "=", "Ventas Facebook"], 
+                    ["active", "=", 1]
+                    ])
+            ->pluck('nombre_completo', 'id');
+
+        return view('facebook.chat.inicio', compact('agentes'));
+    }
+
+    public function GuardaVentasChat(Request $request){
+        DB::table('ventas_chat_pre')->insert(
+            ['dn' => $request->telefono, 
+            'responsable' => session('user'), 
+            'usuario' => $request->agente, 
+            'estatus_chat_res' => $request->estatus, 
+            'usuariochat' => $request->nombreUsuario, 
+            'nombre_cliente' => $request->nombreCliente, 
+            'tel_contacto' => $request->telefonoContacto, 
+            'fecha_agenda' => $request->fechaAgenda, 
+            'hora_agenda' => $request->horaAgenda, 
+            'observaciones' => $request->observaciones,
+            'created_at' => date('Y-m-d H:i:s'), 
+            'fecha'=>date('Y-m-d')]
+        );
+    return redirect('InicioChatFacebook');
+    }
+
+
+    public function RevisaVentasChat(){
+        $agentes = DB::table('pc.usuarios as a')
+            ->select('a.id', 'b.nombre_completo')
+            ->join("candidatos as b", "a.id", "=", "b.id")
+            ->where([["a.puesto", "=", "Ventas Facebook"], 
+                    ["active", "=", 1]
+                    ])
+            ->pluck('nombre_completo', 'id');
+
+        $datos = DB::table('ventas_chat_pre')
+            ->where([['fecha', '>', date ( 'Y-m-d' , strtotime ( '-7 day' , strtotime ( date('Y-m-d') ) ) ) ],
+                    ])
+            ->whereNotIn('estatus_chat_res', ['CAC Lejano', 'Linea Inactiva', 'Venta'])
+            ->get();
+
+        return view('facebook.chat.revisaVentasChat', compact('datos', 'agentes'));
+    }
+
+/*
+    public function mostarDatosRevision($value=''){
+
+        $agentes = DB::table('pc.usuarios as a')
+            ->select('a.id', 'b.nombre_completo')
+            ->join("candidatos as b", "a.id", "=", "b.id")
+            ->where([["a.puesto", "=", "Ventas Facebook"], 
+                    ["active", "=", 1]
+                    ])
+            ->pluck('nombre_completo', 'id');
+
+        
+        $datos = DB::table('ventas_chat_pre')
+            ->where([['usuariochat', '=', $value]
+                ])
+            ->get();
+
+        return view('facebook.chat.datosRevision', compact('agentes', 'datos'));
+    }
+
+*/
+    public function GuardaRevisionVentasChat(Request $request){
+        
+
+        DB::table('ventas_chat_pre')
+            ->where('id' , '=', $request->id)
+            ->update(['dn' => $request->telefono, 
+                    'usuariochat' => $request->nombreUsuario,
+                    'nombre_cliente' => $request->nombreCliente,
+                    'usuario' => $request->agente,
+                    'estatus_chat_res' => $request->estatus, 
+                    'tel_contacto' => $request->telefonoContacto,
+                    'fecha_agenda' => $request->fechaAgenda,
+                    'hora_agenda' => $request->horaAgenda, 
+                    'observaciones' => $request->observaciones,
+                    'updated_at' => date('Y-m-d H:i:s') ]);
+
+        return redirect('chatFBRevisar');
+    }
+
+
+
+
+
+
+
+
+
+    public function InicioOperadorVentasChat(){
+        $id = session('user');
+        $datos = DB::select(DB::raw("select * FROM pc.ventas_chat_pre 
+            where ( (estatus_chat_res not in ('Venta', 'CAC Lejano', 'Linea Inactiva', 'Movistar') or estatus_operador not in ('Venta', 'CAC Lejano', 'Linea Inactiva', 'Movistar')) 
+                    or ((estatus_chat_res in ('No le interesa', 'Buzon de Voz', 'No Contesta') or estatus_operador in ('No le interesa', 'Buzon de Voz', 'No Contesta') ) and date(created_at) between date_sub(curdate(), interval 2 day) and  curdate() ) 
+                    or ((estatus_chat_res in ('Plan de Renta') or estatus_operador in ('Plan de Renta') ) and date(created_at) between date_sub(curdate(), interval 30 day) and  curdate() ) 
+                    or ((estatus_chat_res in ('Fuera de Servicio') or estatus_operador in ('Fuera de Servicio') ) and date(created_at) between date_sub(curdate(), interval 1 day) and  curdate() ) 
+                    or ((estatus_chat_res in ('Reagenda') or estatus_operador in ('Reagenda') ) and fecha_agenda = curdate() ) 
+                   )
+            and usuario = '$id' "));
+
+        return view('facebook.chat.inicioOperador', compact('datos'));
+    }
+
+/*
+    public function VentasChat($value=''){
+        $datos = DB::table('ventas_chat_pre')
+            ->where([['dn', '=', $value]
+                ])
+            ->get();
+        return view('facebook.chat.datosVentas', compact('datos'));
+    }
+*/
+    public function guardaCambiosChat(Request $request){
+        
+            
+            DB::table('ventas_chat_pre')
+            ->where('id', '=', $request->id) 
+            ->update([#'usuariochat' => $request->nombreChat,
+                    #'dn' => $request->telefono,
+                    #'nombre_cliente' => $request->nombreCliente,
+                    'estatus1' => $request->estatus,
+                    'estatus_operador' => $request->motivo, 
+                    'fecha_agenda' => $request->fechaAgenda, 
+                    'hora_agenda' => $request->horaAgenda, 
+                    'actualizacion_op' => date('Y-m-d H:i:s') ,
+                    'updated_at' => date('Y-m-d H:i:s') 
+            ]);
+
+        return redirect('InicioOperadorVentasChat');
+    }
+
+
+    public function reporteVentasFB(){
+        $menu = menu();
+        
+        $datos = DB::select(DB::raw("select fecha, sum(if(dn = '',1,0)) as numero, 
+            sum(if(estatus_chat_res = 'Gestionado por otro call',1, 0 )) as ges, 
+            sum(if(estatus_chat_res = 'Linea Inactiva',1, 0 )) as linea_inactiva, 
+            sum(if(estatus_chat_res = 'Movistar',1, 0 )) as movistar, 
+            sum(if(estatus_chat_res = 'No le Interesa',1, 0 )) as interesa,
+            sum(if(estatus_chat_res = 'Plan de Renta',1, 0)) as renta,
+            sum(if(estatus_chat_res = 'Reagenda',1, 0 )) as reagenda,
+            sum(if(estatus_chat_res = 'No le Interesa',1, 0 )) as interesa,
+            sum(if(estatus_chat_res = 'Buzon',1, 0 )) as buzon,
+            sum(if(estatus_chat_res = 'CAC Lejano',1, 0 )) as cac,
+            sum(if(estatus_chat_res = '', 1, 0 )) as sin_estatus,
+            sum(if(estatus_chat_res = 'Venta',1, 0 )) as venta,
+            sum(if(estatus_chat_res = 'LLamar',1, 0 )) as llamar,
+            count(*) as total FROM pc.ventas_chat_pre where fecha between date_sub(curdate(), interval 2 month) and curdate() group by fecha"));
+
+        $sin_con = DB::select(DB::raw("select fecha, sum(if(dn = '',1,0)) as sin_numero, 
+                        sum(if(dn != '',1,0)) as numero, count(*) as total 
+                        FROM pc.ventas_chat_pre where fecha between date_sub(curdate(), interval 2 month) and curdate() group by fecha"));
+
+
+        return view('rep.ReportesVentasFB.ReporteNumeroFB', compact('datos', 'sin_con', 'menu'));
+
+    }
+
+    public function reporteOperadorVentasFB(){
+        $menu = menu();
+        return view('rep.ReportesVentasFB.OperadorInicio', compact('menu'));
+    }
+
+    public function reporteOperadorVentasFB2(Request $request){
+        $menu = menu();
+
+        $datos = DB::select(DB::raw("select fecha, sum(if(dn = '',1,0)) as sin_numero, 
+            sum(if(estatus_operador = 'Gestionado por otro call',1, 0 )) as gestionado, 
+            sum(if(estatus_operador = 'Linea Inactiva',1, 0)) as linea_inactiva, 
+            sum(if(estatus_operador = 'Movistar',1, 0 )) as movistar, 
+            sum(if(estatus_operador = 'No le Interesa',1, 0)) as interesa,
+            sum(if(estatus_operador = 'Plan de Renta',1, 0)) as renta,
+            sum(if(estatus_operador = 'Reagenda',1, 0)) as reagenda,
+            sum(if(estatus_operador = 'Buzon',1, 0)) as buzon,
+            sum(if(estatus_operador = 'CAC Lejano',1, 0) ) as cac,
+            (sum(if(estatus_operador = '', 1,0)) + sum(if(estatus_operador is null, 1,0))) as sin_estatus,
+            sum(if(estatus_operador = 'Venta',1, 0) ) as venta,
+            sum(if(estatus_operador = 'LLamar',1, 0) ) as llamar,
+            count(*) as total FROM pc.ventas_chat_pre where fecha between '$request->fecha_i' and '$request->fecha_f' group by fecha"));
+
+        return view('rep.ReportesVentasFB.ReporteOperador', compact('datos', 'menu'));
+
+
+    }
+
 }
+
+
+
+
+
+function menu() {
+        $puesto = session('puesto');
+        switch ($puesto) {
+            case 'Root': $menu = "layout.admin.admin";
+                break;
+            case 'Director General': $menu = "layout.admin.admin";
+                break;
+            case 'Recepcionista': $menu = "layout.recepcion.recepcion";
+                break;
+            case 'Capturista': $menu = "layout.rh.Capturista";
+                break;
+            case 'Coordinador': $menu = "layout.coordinador.layoutCoordinador";
+                break;
+            case 'Jefe de administracion': $menu = "layout.rh.admin";
+                break;
+            case 'Jefe de Reclutamiento': $menu = "layout.rh.jefeRecluta";
+                break;
+            case 'Gerente de RRHH': $menu = "layout.recepcion.recepcion";
+                break;
+            case 'Asistente administrativo Jr': $menu = "layout.recepcion.recepcion";
+                break;
+            case 'Supervisor': $menu = "layout.recepcion.recepcion";
+                break;
+            default: $menu = "layout.error.error";
+                break;
+        }
+        return $menu;
+    }
+
+
+
+
+
+
+

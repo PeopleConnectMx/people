@@ -33,7 +33,7 @@
 <!--                              <li><a href="{{ url('/Administracion/root') }}">Nuevo empleado</a></li>       -->
                                 <li><a href="{{ url('/recepcion') }}">Pendiente de Alta</a></li>
                                 <li><a href="{{ url('/recepciontotal') }}">Listado</a></li>
-                                <li><a href="{{ url('/Administracion/admin/plantilla') }}">Plantilla</a></li>
+                                <li><a href="{{ url('Administracion/admin/plantilla') }}">Plantilla</a></li>
                                 <li><a href="{{ url('/rh/nuevo/candidato') }}">Nuevo Empleado</a></li>
                                 <li><a href="{{ url('/citas') }}">Citas</a></li>
                                 <li><a href="{{ url('/recepcion/asistencia/') }}">Asistencia Capacitación</a></li>
@@ -47,6 +47,8 @@
                                 <li><a href="{{ url('rh/capacitacionMedio') }}">Capacitacion por medio de Reclutamiento</a></li>
                                 <li><a href="{{ url('rh/capacitacionMedioActivo') }}">Capacitacion por Reclutador</a></li>
                                 <li><a href="{{ url('rh/asistencia') }}">Asistencia</a></li>
+                                <li><a href="{{ url('/incidencias') }}">Nueva Incidencia</a></li>
+                                <li><a href="{{ url('/Administracion/root/asistencias_bajas') }}">Reporte asistencia inactivos</a></li>
                                 <!--<li><a href="/">Something else here</a></li>
                                 <li class="divider"></li>
                                 <li><a href="/">Separated link</a></li>
@@ -60,6 +62,7 @@
                                 <li><a href="{{ url('rh/nuevo/candidato') }}">Nuevo Candidato</a></li>
                                 <li><a href="{{ url('rh/candidatosCaptura') }}">Listado</a></li>
                                 <li><a href="{{ url('/perCandEntre') }}">Citas no atendidas</a></li>
+                                <li><a href="{{ url('/FechaNuevoReporte') }}">Reporte Citas y Entrevistas</a></li>
                             </ul>
                         </li>
 

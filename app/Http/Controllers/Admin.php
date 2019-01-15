@@ -21,12 +21,14 @@ class Admin {
                 || (Session('puesto') == 'Recepcionista')
 		|| (Session('puesto') == 'Jefe de BO') 
                 || (Session('puesto') == 'Director General') 
-                || (Session('puesto') == 'Programador') )) {
+                || (Session('puesto') == 'Programador') 
+                || (Session('puesto') == 'Asistente administrativo Jr') 
+            )) {
 
             return $next($request);
         } else {
 
-            return redirect('/Banamex');
+            return redirect('/');
         }
     }
 

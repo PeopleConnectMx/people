@@ -36,9 +36,21 @@
                                 <li><a href="{{ url('prepago/supervisor/AsistenciaDatos') }}">Asistencia</a></li>
                                 <!-- <li><a href="{{ url('prepago/supervisor/perRefRep') }}">Referencias repetidas</a></li> -->
                                 <li><a href="{{ url('/reporteRV') }}">Reporte de ventas completo</a></li>
+                                <li><a href="{{ url('/asistenciaHistorico') }}">Reporte Historico Asistencias</a></li>
 
+                                <?php
+                                $user = Session::all();
+                                if ($user['user'] == 1608120012){
+                                ?>
+                                    <li><a href="{{ url('/direccion/proyeccion/prepago/').date('/Y-m-d') }}">Planeacion TM Prepago</a></li>
 
+                                <?php
 
+                                }
+
+                                ?>
+                                <li><a href="{{ url('/prepago/SubirAltas') }}">Subir Reporte de Altas</a></li>
+                                <li><a href="{{ url('/prepago/ReporteP1') }}">Reporte Proceso 1</a></li>
                                 <!--<li><a href="/">Something else here</a></li>
                                 <li class="divider"></li>
                                 <li><a href="/">Separated link</a></li>

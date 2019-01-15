@@ -10,6 +10,8 @@ use App\Model\ActiveUser;
 use App\Model\Cps;
 use App\Model\TmPrepago\TmPrepagoEstatus;
 use App\Model\TmPospago\TmPospagoEstatus;
+use App\Model\Pbx\TmPrepagoDatos;
+use App\Model\Pbx\TmPrepagoDatosContactos;
 
 class TmVentasController extends Controller {
 
@@ -210,6 +212,7 @@ class TmVentasController extends Controller {
       $datos->st2=$request->st2;
       $datos->st3=$request->st3;
       $datos->agente=session('user');
+      $datos->fecha = date('Y-m-d');
       $datos->save();
       return redirect('/tm/pre/estadoAgente');
     }
@@ -228,5 +231,34 @@ class TmVentasController extends Controller {
       return redirect('/tm/pos/estadoAgente');
     }
     
-    /*funciones para postpago editado por eymmy\(°u°)/ */
+    /*funciones para postpago echo por eymmy\(°u°)/ */
+
+
+	
+    public function DatosLlamada($value=''){
+        
+        $inbursa=TmPrepagoDatos::where([
+          #'agent'=>'SIP/221',
+          'agent'=>'Agent/'.session('extension'),
+          'event'=>'CONNECT'
+        ])
+        ->orderBy('time','desc')
+        ->limit('1')
+        ->get();
+        
+        #console.log($inbursa);
+
+        $inbursa_st2=TmPrepagoDatos::where([
+            ['callid', '=', $inbursa[0]['callid']],
+            ['event', '=', 'ENTERQUEUE']
+        ])
+        ->get();
+
+		
+
+		return response($inbursa_st2[0]);
+    }
+
+
+
 }

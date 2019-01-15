@@ -32,12 +32,14 @@
                     <li class="dropdown">
                           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Menu<span class="caret"></span></a>
                           <ul class="dropdown-menu" role="menu">
+                            <li><a href="<?php echo e(url('/edicionSoluciones')); ?>">Edicion Inbursa Soluciones</a></li>
                             <li><a href="<?php echo e(url('/EdicionAva')); ?>">Reporte de Edición por Avance</a></li>
                             <li><a href="<?php echo e(url('/EdicionEdi')); ?>">Reporte de Edición por Editor</a></li>
                             <li><a href="<?php echo e(url('/fechaNoEncontrado')); ?>">Reporte de Audios No Encontrados</a></li>
                             <li><a href="<?php echo e(url('/EdicionEsta')); ?>">Reporte de Edición por Estatus</a></li>
                             <li><a href="<?php echo e(url('/EdicionTipifica')); ?>">Reporte de Edición por Tipificación</a></li>
                             <li><a href="<?php echo e(url('/VerEditores')); ?>">Cambio de Campaña</a></li>
+
                           </ul>
                     </li>
 

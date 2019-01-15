@@ -61,76 +61,124 @@
                 </li>
                 <!-- Calidad -->
                 @if (session('area')=='Calidad' || session('puesto')=='Jefe de desarrollo')
-                <li data-toggle="collapse" data-target="#calidad" class="collapsed active">
-                  <a>
-                    Calidad <span class="glyphicon glyphicon-chevron-down"></span>
-                  </a>
-                </li>
+                    <li data-toggle="collapse" data-target="#calidad" class="collapsed active">
+                      <a>
+                        Calidad <span class="glyphicon glyphicon-chevron-down"></span>
+                      </a>
+                    </li>
 
-                <ul class="sub-menu collapse nav nav-pills nav-stacked" id="calidad">
-                  @if(session('campaign')=='Inbursa' || session('puesto')=='Jefe de desarrollo')
-                  <li data-toggle="collapse" data-target="#InbursaCalidad" class="collapsed active">
-                    <a>
-                      Inbursa <span class="glyphicon glyphicon-triangle-bottom"></span>
-                    </a>
-                  </li>
-                  <ul class="sub-menu collapse nav nav-pills nav-stacked" id="InbursaCalidad">
-                      <li class=""><a href="{{url('/Inbursa/Calidad/Audios/Inicio')}}" class="glyphicon glyphicon-menu-right"> Edición</a></li>
-                      <li class=""><a href="{{url('/Inbursa/Calidad/Ventas/Inicio')}}" class="glyphicon glyphicon-menu-right"> Ventas</a></li>
-                  </ul>
-                  @endif
-                </ul>
+
+                    <ul class="sub-menu collapse nav nav-pills nav-stacked" id="calidad">
+                      @if(session('campaign')=='Inbursa' || session('puesto')=='Jefe de desarrollo'|| session('campaign')=='Inbursa Soluciones')
+                      <li data-toggle="collapse" data-target="#InbursaCalidad" class="collapsed active">
+                        <a>
+                          Inbursa <span class="glyphicon glyphicon-triangle-bottom"></span>
+                        </a>
+                      </li>
+                      <ul class="sub-menu collapse nav nav-pills nav-stacked" id="InbursaCalidad">
+                          <li class=""><a href="{{url('/Inbursa/Calidad/Audios/Inicio')}}" class="glyphicon glyphicon-menu-right"> Edición</a></li>
+                          <li class=""><a href="{{url('/Inbursa/Calidad/Ventas/Inicio')}}" class="glyphicon glyphicon-menu-right"> Ventas</a></li>
+                      </ul>
+                      
+                      <li data-toggle="collapse" data-target="#SolucionesCalidad" class="collapsed active">
+                        <a>
+                          Soluciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                        </a>
+                      </li>
+                      <ul class="sub-menu collapse nav nav-pills nav-stacked" id="SolucionesCalidad">
+                          <li class=""><a href="{{url('/Inbursa_Soluciones/Calidad/Audios/Inicio')}}" class="glyphicon glyphicon-menu-right"> Edición sol</a></li>
+                      </ul>
+                      @endif
+                    </ul>
 
                 @endif
 
+
+
+
+
+
                 <!-- Inbursa -->
                 @if (session('campaign')=='Inbursa' || session('area')=='Sistemas')
-                <li data-toggle="collapse" data-target="#InbursaOperaciones" class="collapsed active">
-                  <a>
-                    Inbursa <span class="glyphicon glyphicon-chevron-down"></span>
-                  </a>
-                </li>
-                <ul class="sub-menu collapse nav nav-pills nav-stacked" id="InbursaOperaciones">
-                  @if (session('puesto')=='Operador de call center' || session('puesto')=='Jefe de desarrollo')
-                  <li data-toggle="collapse" data-target="#OperadorInbursa" class="collapsed active">
+                  <li data-toggle="collapse" data-target="#InbursaOperaciones" class="collapsed active">
                     <a>
-                      Operador<span class="glyphicon glyphicon-triangle-bottom"></span>
+                      Inbursa <span class="glyphicon glyphicon-chevron-down"></span>
                     </a>
                   </li>
 
-                  <ul class="sub-menu collapse nav nav-pills nav-stacked" id="OperadorInbursa">
-                      <li class=""><a href="{{url('/Inbursa/Operaciones/Agente/Inicio')}}" class="glyphicon glyphicon-menu-right"> Captura</a></li>
-                      <li class=""><a href="{{url('/Inbursa/Calidad/Ventas/Inicio')}}" class="glyphicon glyphicon-menu-right"> Corroboración</a></li>
+
+                  <ul class="sub-menu collapse nav nav-pills nav-stacked" id="InbursaOperaciones">
+                    @if (session('puesto')=='Operador de call center' || session('puesto')=='Jefe de desarrollo')
+                    <li data-toggle="collapse" data-target="#OperadorInbursa" class="collapsed active">
+                      <a>
+                        Operador<span class="glyphicon glyphicon-triangle-bottom"></span>
+                      </a>
+                    </li>
+
+                    <ul class="sub-menu collapse nav nav-pills nav-stacked" id="OperadorInbursa">
+                        <li class=""><a href="{{url('/Inbursa/Operaciones/Agente/Inicio')}}" class="glyphicon glyphicon-menu-right"> Captura</a></li>
+                        <li class=""><a href="{{url('/Inbursa/Calidad/Ventas/Inicio')}}" class="glyphicon glyphicon-menu-right"> Corroboración</a></li>
+                    </ul>
+                    @endif
+                    @if (session('puesto')=='Validador' || session('puesto')=='Jefe de desarrollo')
+                    <li data-toggle="collapse" data-target="#ValidadorInbursa" class="collapsed active">
+                      <a>
+                        Validación <span class="glyphicon glyphicon-triangle-bottom"></span>
+                      </a>
+                    </li>
+
+                    <ul class="sub-menu collapse nav nav-pills nav-stacked" id="ValidadorInbursa">
+                        <li class=""><a href="{{url('/Inbursa/Calidad/Audios/Inicio')}}" class="glyphicon glyphicon-menu-right"> Captura</a></li>
+                        <li class=""><a href="{{url('/Inbursa/Calidad/Ventas/Inicio')}}" class="glyphicon glyphicon-menu-right"> Corroboración</a></li>
+                    </ul>
+                    @endif
+
+
+
+
+                    @if (session('area')=='Sistemas' || session('puesto')=='Supervisor')
+                    <li data-toggle="collapse" data-target="#ReportesInbursa" class="collapsed active">
+                      <a>
+                        Reportes <span class="glyphicon glyphicon-triangle-bottom"></span>
+                      </a>
+                    </li>
+
+                    <ul class="sub-menu collapse nav nav-pills nav-stacked" id="ReportesInbursa">
+                        <li class=""><a href="{{url('/Inbursa/Reportes/Envio/Ventas/Inicio')}}" class="glyphicon glyphicon-menu-right"> Enviar ventas</a></li>
+                        <li class=""><a href="{{url('/Inbursa/Reportes/Envio/Validaciones/Inicio')}}" class="glyphicon glyphicon-menu-right"> Enviar validaciones</a></li>
+                        <li class=""><a href="{{url('/Inbursa/Reportes/Envio/Rechazos/Inicio')}}" class="glyphicon glyphicon-menu-right"> Subir rechazos</a></li>
+                    </ul>
+                    @endif
                   </ul>
-                  @endif
-                  @if (session('puesto')=='Validador' || session('puesto')=='Jefe de desarrollo')
-                  <li data-toggle="collapse" data-target="#ValidadorInbursa" class="collapsed active">
+
+
+
+
+
+
+
+                  <li data-toggle="collapse" data-target="#InbursaSolucionesOperaciones" class="collapsed active">
                     <a>
-                      Validación <span class="glyphicon glyphicon-triangle-bottom"></span>
+                      Inbursa Soluciones <span class="glyphicon glyphicon-chevron-down"></span>
                     </a>
                   </li>
 
-                  <ul class="sub-menu collapse nav nav-pills nav-stacked" id="ValidadorInbursa">
-                      <li class=""><a href="{{url('/Inbursa/Calidad/Audios/Inicio')}}" class="glyphicon glyphicon-menu-right"> Captura</a></li>
-                      <li class=""><a href="{{url('/Inbursa/Calidad/Ventas/Inicio')}}" class="glyphicon glyphicon-menu-right"> Corroboración</a></li>
+                  <ul class="sub-menu collapse nav nav-pills nav-stacked" id="InbursaSolucionesOperaciones">
+                    @if (session('area')=='Sistemas' || session('puesto')=='Supervisor')
+                    <li data-toggle="collapse" data-target="#ReportesInbursaSoluciones" class="collapsed active">
+                      <a>
+                        Reportes Soluciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                      </a>
+                    </li>
+
+                    <ul class="sub-menu collapse nav nav-pills nav-stacked" id="ReportesInbursaSoluciones">
+                        <li class=""><a href="{{url('/InbursaSoluciones/Reportes/Envio/Ventas/Inicio')}}" class="glyphicon glyphicon-menu-right">Ventas Soluciones</a></li>
+                        <li class=""><a href="{{url('/InbursaSoluciones/Reportes/Envio/Validaciones/Inicio')}}" class="glyphicon glyphicon-menu-right">Validaciones Soluciones </a></li>
+                        <li class=""><a href="{{url('/InbursaSoluciones/Reportes/Envio/Rechazos/Inicio')}}" class="glyphicon glyphicon-menu-right">Rechazos Soluciones</a></li>
+                    </ul>
+                    @endif
                   </ul>
-                  @endif
 
-                  @if (session('area')=='Sistemas' || session('puesto')=='Supervisor')
-                  <li data-toggle="collapse" data-target="#ReportesInbursa" class="collapsed active">
-                    <a>
-                      Reportes <span class="glyphicon glyphicon-triangle-bottom"></span>
-                    </a>
-                  </li>
-
-                  <ul class="sub-menu collapse nav nav-pills nav-stacked" id="ReportesInbursa">
-                      <li class=""><a href="{{url('/Inbursa/Reportes/Envio/Ventas/Inicio')}}" class="glyphicon glyphicon-menu-right"> Enviar ventas</a></li>
-                      <li class=""><a href="{{url('/Inbursa/Reportes/Envio/Validaciones/Inicio')}}" class="glyphicon glyphicon-menu-right"> Enviar validaciones</a></li>
-                      <li class=""><a href="{{url('/Inbursa/Reportes/Envio/Rechazos/Inicio')}}" class="glyphicon glyphicon-menu-right"> Subir rechazos</a></li>
-                  </ul>
-                  @endif
-
-                </ul>
                 @endif
                 <li>
                   <a href="{{url('/salir')}}">

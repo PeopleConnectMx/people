@@ -5,7 +5,7 @@
         <div class="jumbotron">
             <h1>Folio inexistente</h1>
             <p>El folio digitado no exite</b></p>
-            <p><a href="{{url('/Inbursa_soluciones/agente/downsession') }}" class="btn btn-primary btn-lg">Regresar al menu</a></p>
+            <p><a href="{{url('/Inbursa_soluciones/validacion') }}" class="btn btn-primary btn-lg">Regresar al menu</a></p>
         </div>
     </div>
 </div>

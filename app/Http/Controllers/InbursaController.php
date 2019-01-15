@@ -274,8 +274,7 @@ class InbursaController extends Controller {
                 #->where('estatus_people', 1)
                 ->where('estatus_people_2', 'Venta')
                 ->get();
-
-
+        
         return view('edicion/listaAudios', compact('datos'));
     }
 
@@ -289,8 +288,9 @@ class InbursaController extends Controller {
         #dd($telefono, $fecha_capt, $anio, $mes, $dia);
         #manda a llamar a la funcion para obtener los nombres de los audios
 
-        $audios = $this->findfile($anio, $mes, $dia, $telefono);
-
+        #$audios = $this->findfile($anio, $mes, $dia, $telefono);
+        
+        $audios = [];
 
         return view('edicion/descarga', compact('telefono', 'fecha_capt', 'audios', 'id', 'estatusSubido'));
     }
@@ -312,7 +312,7 @@ class InbursaController extends Controller {
                     //-> save('inbursa','NuevoNombre');
                     //1610040034 gabriela parra garcia
                     #->move('InburAudios/'.$request->fecha.'/'.$request->mes.'/'.$request->dia , $nombre);
-                    ->move('inburVidatelAudios/' . date('Y') . '/' . date('m') . '/' . date('d'), $nombre);
+                    ->move('inbursa VidatelAudios/' . date('Y') . '/' . date('m') . '/' . date('d'), $nombre);
 
             $user = Session::all();
             #dd($user, date('Y-m-d'));
@@ -1061,7 +1061,7 @@ class InbursaController extends Controller {
 
 
         try {
-            $location = file_get_contents("http://13.85.24.249/Grabaciones_Inbursa/Inbursa/$anio/$mes/$dia", 'r');
+            $location = file_get_contents("http://13.85.24.249/Grabaciones_Vidatel/Vidatel/$anio/$mes/$dia", 'r');
             $location = explode("\n", $location);
             #dd($location);
 	        foreach ($location as $key => $value) {
@@ -1071,7 +1071,7 @@ class InbursaController extends Controller {
                     #
                 } else {
                   #dd($value);
-                    $cadena = substr($value, 13);
+                    $cadena = substr($value, 80);
                     $posicionsubcadena = strpos($cadena, ".wav");
                     $dominio = substr($cadena, ($posicionsubcadena));
 
@@ -1083,7 +1083,7 @@ class InbursaController extends Controller {
         } catch (\Exception $e) {
             $audios[0] = '';
         }
-        #dd($audios);
+        dd($audios);
     	return $audios;
 		/*Empieza la chido*/
 		/*$location = "/home/Grabaciones/$anio/$mes/$dia";

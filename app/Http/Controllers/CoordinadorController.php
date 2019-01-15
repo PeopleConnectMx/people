@@ -122,34 +122,32 @@ class CoordinadorController extends Controller
       }
         return view('coordinador.reportes.FechaNuevoReporte',compact('menu'));
     }
-    public function VerNuevoReporte(Request $request)
-    {
+    public function VerNuevoReporte(Request $request){
       $puesto=session('puesto');
-      switch ($puesto) {
-        case 'Director General': $menu="layout.root.root"; break;
-        case 'Coordinador': $menu="layout.coordinador.layoutCoordinador"; break;
-        case 'Jefe de administracion': $menu="layout.rh.admin"; break;
-        case 'Root': $menu = "layout.root.root";break;
-        case 'Calidad': $menu = "layout.rh.calidad.calidad";break;
-        default: $menu="layout.rep.basic"; break;
-      }
+        switch ($puesto) {
+          case 'Director General': $menu="layout.root.root"; break;
+          case 'Coordinador': $menu="layout.coordinador.layoutCoordinador"; break;
+          case 'Jefe de administracion': $menu="layout.rh.admin"; break;
+          case 'Root': $menu = "layout.root.root";break;
+          case 'Calidad': $menu = "layout.rh.calidad.calidad";break;
+          default: $menu="layout.rep.basic"; break;
+        }
       $fecha_i=$request->fecha_i;
       $fecha_f=$request->fecha_f;
 
 
 
-
-
   $c1=DB::select(
-    DB::raw("SELECT b.nombre_completo, count(*) as citas,
+    DB::raw("select b.nombre_completo, count(*) as citas,
                     sum(if(resultado_cita<>'',1,0)) as entrevistados, (
                     sum(if(resultado_cita<>'',1,0))/count(*) )* 100 as efectividad
                     FROM pc.candidatos a inner join pc.empleados b on a.ejec_llamada=b.id
                     where date(a.fecha_cita) between '$fecha_i' and '$fecha_f'
                     group by b.nombre_completo;")
   );
+
   $c2=DB::select(
-    DB::raw("SELECT b.nombre_completo, count(*) as 'Asistieron', sum(if(primerDia='Si' or segundoDia='Si',1,0)) as 'Aceptados', ( sum(if(primerDia='Si' and
+    DB::raw("select b.nombre_completo, count(*) as 'Asistieron', sum(if(primerDia='Si' or segundoDia='Si',1,0)) as 'Aceptados', ( sum(if(primerDia='Si' and
                     segundoDia='Si',1,0))/count(*) )* 100 as efectividad
                     FROM pc.candidatos a inner join pc.empleados b on a.ejec_llamada=b.id
                     inner join pc.observaciones_candidatos c on a.id=c.id
@@ -157,48 +155,32 @@ class CoordinadorController extends Controller
                     and estatus_cita <> ''
                     group by b.nombre_completo;")
   );
-
   $F1=$request->fecha_i;
   $F2=$request->fecha_f;
   // dd($F1,$F2);
     return view('coordinador.reportes.NuevoReporte',compact('menu','c1','c2','F1','F2'));
     }
 
-    public function ReporteCandidatos(Request $request)
-    {
+    public function ReporteCandidatos(Request $request){
       $F1=$request->F1;
       $F2=$request->F2;
-// dd($F1,$F2);
-
-
       Excel::create('Reportes Candidatos', function($excel) use($request) {
         $excel->sheet('Candidatos', function($sheet) use($request)  {
-
           $F1=$request->F1;
           $F2=$request->F2;
           $data=array();
-          $top=array("id","nombre_completo","paterno","materno","nombre","turno","area","puesto","estadoCandidato","telefono_cel","telefono_fijo","email","campaign",
-          "experiencia","ejec_llamada","estatus_llamada","fecha_cita","sucursal","ejec_entrevista","estatus_cita","tipo_medio_reclutamiento","medio_reclutamiento","fecha_nacimiento",
-          "sexo","estado_civil","estado","delegacion","colonia","calle","hijos","s_base","s_complemento","bono_asis_punt","bono_calidad","bono_productividad","resultado_cita",
-          "fecha_capacitacion","estado_capacitacion","nombre_capacitador","created_at","updated_at",
-          "id","asistencia","primerDia","segundoDia","observaciones","created_at","updated_at");
+          $top=array("No Empleado","nombre_completo","paterno","materno","nombre","turno","area","puesto","estadoCandidato","telefono_cel","telefono_fijo","campaign", "ejec_llamada","estatus_llamada","fecha_cita","ejec_entrevista","estatus_cita","tipo_medio_reclutamiento","medio_reclutamiento","resultado_cita", "fecha_capacitacion","estado_capacitacion", "nombre_capacitador", "fecha-captura");
 
           $data=array($top);
+
           // $candidatos=DB::table('candidatos')
           // ->leftJoin('observaciones_candidatos', 'candidatos.id', '=', 'observaciones_candidatos.id')
           // ->whereBetween(DB::raw("date(candidatos.fecha_cita)"), [$F1, $F2])
           // ->orderBy('candidatos.fecha_cita')
           // ->get();
 
-
-
-$candidatos=DB::select("SELECT *
-FROM pc.candidatos c
-left join pc.observaciones_candidatos oc
-ON c.id=oc.id
-WHERe  date(fecha_cita) BETWEEN DATE_SUB(NOW(), INTERVAL 2 MONTH) AND NOW()
-order by fecha_cita;");
-
+        $candidatos=DB::select("select c.id, c.nombre_completo, c.paterno, c.materno, c.nombre, c.turno, c.area, c.puesto, c.estadoCandidato, c.telefono_cel, c.telefono_fijo, 
+  campaign, ejec_llamada, estatus_llamada, fecha_cita, ejec_entrevista, estatus_cita, tipo_medio_reclutamiento, medio_reclutamiento, resultado_cita, fecha_capacitacion, estado_capacitacion, nombre_capacitador, c.created_at FROM pc.candidatos c left join pc.observaciones_candidatos oc on c.id=oc.id where date(c.fecha_cita) between DATE_SUB(NOW(), INTERVAL 2 MONTH) AND NOW()");
 
           foreach ($candidatos as $valueCan) {
             $datos=array();
@@ -213,43 +195,19 @@ order by fecha_cita;");
             array_push($datos, $valueCan->estadoCandidato);
             array_push($datos, $valueCan->telefono_cel);
             array_push($datos, $valueCan->telefono_fijo);
-            array_push($datos, $valueCan->email);
             array_push($datos, $valueCan->campaign);
-            array_push($datos, $valueCan->experiencia);
             array_push($datos, $valueCan->ejec_llamada);
             array_push($datos, $valueCan->estatus_llamada);
             array_push($datos, $valueCan->fecha_cita);
-            array_push($datos, $valueCan->sucursal);
             array_push($datos, $valueCan->ejec_entrevista);
             array_push($datos, $valueCan->estatus_cita);
             array_push($datos, $valueCan->tipo_medio_reclutamiento);
             array_push($datos, $valueCan->medio_reclutamiento);
-            array_push($datos, $valueCan->fecha_nacimiento);
-            array_push($datos, $valueCan->sexo);
-            array_push($datos, $valueCan->estado_civil);
-            array_push($datos, $valueCan->estado);
-            array_push($datos, $valueCan->delegacion);
-            array_push($datos, $valueCan->colonia);
-            array_push($datos, $valueCan->calle);
-            array_push($datos, $valueCan->hijos);
-            array_push($datos, $valueCan->s_base);
-            array_push($datos, $valueCan->s_complemento);
-            array_push($datos, $valueCan->bono_asis_punt);
-            array_push($datos, $valueCan->bono_calidad);
-            array_push($datos, $valueCan->bono_productividad);
             array_push($datos, $valueCan->resultado_cita);
             array_push($datos, $valueCan->fecha_capacitacion);
             array_push($datos, $valueCan->estado_capacitacion);
             array_push($datos, $valueCan->nombre_capacitador);
             array_push($datos, $valueCan->created_at);
-            array_push($datos, $valueCan->updated_at);
-            array_push($datos, $valueCan->id);
-            array_push($datos, $valueCan->asistencia);
-            array_push($datos, $valueCan->primerDia);
-            array_push($datos, $valueCan->segundoDia);
-            array_push($datos, $valueCan->observaciones);
-            array_push($datos, $valueCan->created_at);
-            array_push($datos, $valueCan->updated_at);
             array_push($data,$datos);
           }
 

@@ -117,11 +117,11 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Facebook<span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ url('/reportesfacebook') }}">Ventas Hoy</a></li>
-                                    <li><a href="{{ url('/reportesfacebook/filtro') }}">Reporte por Filtro</a></li>
+                                    <!--<li><a href="{{ url('/reportesfacebook') }}">Ventas Hoy</a></li>
+                                    <li><a href="{{ url('/reportesfacebook/filtro') }}">Reporte por Filtro</a></li> -->
                                     <!-- <li><a href="{{ url('/ventasAgentesFacebook') }}">Ventas Facebook</a></li>
                                     <li><a href="{{ url('/ventasRealesFacebook') }}">Ventas Reales</a></li> -->
-                                    <li><a href="{{ url('/reportesfacebookventasdif') }}">Ventas No Reales</a></li>
+                                    <!--<li><a href="{{ url('/reportesfacebookventasdif') }}">Ventas No Reales</a></li> -->
                                     <!-- <li><a href="{{ url('/reportesfacebookventas') }}">Ventas facebook-Telemarketing</a></li> -->
                                 </ul>
                             </li>

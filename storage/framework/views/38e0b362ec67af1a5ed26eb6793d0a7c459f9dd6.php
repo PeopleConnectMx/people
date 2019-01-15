@@ -52,15 +52,15 @@
                             <td><?php echo e($fecha_capt); ?></td>
                             <td><?php echo e($hora); ?>:<?php echo e($minuto); ?>:<?php echo e($segundo); ?></td>
                             <td>
-                                <source src="http://13.85.24.249/Grabaciones_Inbursa/Inbursa/<?php echo e($anio); ?>/<?php echo e($mes); ?>/<?php echo e($dia); ?>/<?php echo e($value); ?>" type="audio/wav"/>
+                                <source src="http://13.85.24.249/Grabaciones_Vidatel/Vidatel/<?php echo e($anio); ?>/<?php echo e($mes); ?>/<?php echo e($dia); ?>/<?php echo e($value); ?>" type="audio/wav"/>
                                 <div>
-                                    <a type="button" class="btn btn-default" target="_blank" href="http://13.85.24.249/Grabaciones_Inbursa/Inbursa/<?php echo e($anio); ?>/<?php echo e($mes); ?>/<?php echo e($dia); ?>/<?php echo e($value); ?>" ;>
+                                    <a type="button" class="btn btn-default" target="_blank" href="http://13.85.24.249/Grabaciones_Vidatel/Vidatel/<?php echo e($anio); ?>/<?php echo e($mes); ?>/<?php echo e($dia); ?>/<?php echo e($value); ?>" ;>
                                         <span class="glyphicon glyphicon-play"></span>
                                     </a>
                                 </div>
                             </td>
                             <td>
-                               <a href="http://13.85.24.249/Grabaciones_Inbursa/Inbursa/<?php echo e($anio); ?>/<?php echo e($mes); ?>/<?php echo e($dia); ?>/<?php echo e($value); ?>" type="button" class="btn btn-default" download="audio.wav">
+                               <a href="http://13.85.24.249/Grabaciones_Vidatel/Vidatel/<?php echo e($anio); ?>/<?php echo e($mes); ?>/<?php echo e($dia); ?>/<?php echo e($value); ?>" type="button" class="btn btn-default" download="audio.wav">
                                    <span class="glyphicon glyphicon-download-alt"></span>
                                </a>
                             </td>

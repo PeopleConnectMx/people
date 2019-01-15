@@ -29,7 +29,7 @@
                                 </div>
                                 <div class="col-lg-2">
                                   <?php echo e(Form::select('', [
-                                  "Activo"=>"Activo","Inactivo"=>"Inactivo"
+                                  "Activo"=>"Activo","Inactivo"=>"Inactivo","Fantasma"=>"Fantasma"
                                   ],null, ['class'=>"form-control", "placeholder"=>"Estado","id"=>"status"] )); ?>
 
                                 </div>

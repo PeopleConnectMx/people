@@ -28,14 +28,33 @@ class InbursaSolucionesController extends Controller{
   public function inicio(){
     $states= Cps::lists('estado','clave_edo');
 
+    $validadores = DB::table('pc.candidatos as c')
+            ->select('c.id', 'c.nombre_completo')
+            ->join('pc.usuarios as u', 'c.id', '=', 'u.id' )
+			      ->where(['c.campaign'=>'Inbursa Soluciones', 'c.puesto'=>'Validador', 'u.active'=>1])
+            ->pluck('c.nombre_completo', 'c.id');
+
+
+    return view('inbursaSoluciones.agente.inicioAgenteManual',compact('states', 'validadores'));
+  }
+
+
+
+
+  public function inicio2(){
+    $states= Cps::lists('estado','clave_edo');
+
     $validadores = DB::table('pc.candidatos')
             ->select('id', 'nombre_completo')
-			->where(['campaign'=>'Inbursa Soluciones', 'puesto'=>'Validador'])
+      ->where(['campaign'=>'Inbursa Soluciones', 'puesto'=>'Validador'])
             ->pluck('nombre_completo', 'id');
 
 
-    return view('inbursaSoluciones.agente.inicioAgente',compact('states', 'validadores'));
+    return view('inbursaSoluciones.agente.inicioAgenteManual2',compact('states', 'validadores'));
   }
+
+
+
 
   public function municipios($id){
       #dd($id);
@@ -78,29 +97,32 @@ class InbursaSolucionesController extends Controller{
 
   public function FromularioInbSoluciones(Request $request){
 
+
     $acentos=array ( 'Ã¡'=>'a', 'Ã©'=>'e', 'Ã­'=>'i', 'Ã³'=>'o', 'Ãº'=>'u', 'Ã'=>'A', 'Ã‰'=>'E', 'Ã'=>'I', 'Ã“'=>'O', 'Ãš'=>'U', "'"=>'', '"'=>'' );
 
       if($request->motivo=='Venta') {
       # code...
         $venta= new Inbursa_Soluciones();
+        
+        #$venta->idr = $request->idr;
         $venta->telefono=$request->telefono;
         $venta->ap_paterno=strtoupper(strtr($request->ap_paterno,$acentos));
         $venta->ap_materno=strtoupper(strtr($request->ap_materno,$acentos));
         $venta->nombre=strtoupper(strtr($request->nombre,$acentos));
         $venta->fech_nac=$request->fecnacaseg;
         $venta->sexo=strtoupper($request->sexo);
-        $venta->edo_civil=$request->edocivil;
+        $venta->edo_civil= 'NO APLICA' ;#$request->edocivil;
         $venta->nom_conyuge= '' ;#strtoupper(strtr($request->nomconyuge,$acentos));;
         $venta->fech_nac_conyuge= '' ;#$request->fechconyuge;
         $venta->autoriza=strtoupper(strtr($request->autoriza,$acentos));
         $venta->parentesco=strtoupper(strtr($request->parentesco,$acentos));
-        $venta->correo=$request->correo ;  #$venta->ap_paterno=strtoupper(strtr($request->ap_paterno,$acentos));
+        $venta->correo= strtoupper($request->correo);  #$venta->ap_paterno=strtoupper(strtr($request->ap_paterno,$acentos));
         $venta->estatus='A';
         $venta->fecha_capt=date('Y-m-d');
         $venta->direccion=strtoupper(strtr($request->direccion,$acentos));
         #$venta->num_ext=$request->num_ext;
         $venta->vialidad=strtoupper(strtr($request->vialidad,$acentos));
-        $venta->vivienda=strtoupper(strtr($request->vivienda,$acentos));
+        $venta->vivienda= 'NEG'; #strtoupper(strtr($request->vivienda,$acentos));
         $venta->num_int=$request->numint;
         $venta->piso=$request->piso;
         $venta->asentamiento=strtoupper(strtr($request->asentamien,$acentos));
@@ -109,29 +131,34 @@ class InbursaSolucionesController extends Controller{
         $venta->colonia=strtoupper(strtr($request->col,$acentos));
         $venta->cp=$request->cp;
         $venta->calle_1= strtoupper(strtr($request->Calle_1, $acentos));
-        $venta->calle_2=strtoupper(strtr($request->Calle_2, $acentos));
-        $venta->ref_1=strtoupper(strtr($request->ref_1,$acentos));
+        $venta->calle_2= 'NO PROPORCIONO'; #strtoupper(strtr($request->Calle_2, $acentos));
+        $venta->ref_1= 'NO PROPORCIONO';#strtoupper(strtr($request->ref_1,$acentos));
         // $venta->ref_1=$request->ref_1_num. " " .$request->ref_1_tel. "" .strtoupper(strtr($request->ref_1_com,$acentos));
-        $venta->ref_2=strtoupper(strtr($request->ref_2,$acentos));
+        $venta->ref_2= 'NO PROPORCIONO'; #strtoupper(strtr($request->ref_2,$acentos));
         $venta->rvt= session('user');#strtoupper(strtr($request->rvt,$acentos));
+        $venta->rvt_real= session('user');
         $venta->turno=strtoupper($request->turno);
         $venta->hora_ini=$request->hora_ini;
-        $venta->hora_fin=date('h:i:s');
+        $venta->hora_fin=date('H:i:s');
         $venta->num_pisos=$request->num_pisos;
         $venta->cubierta=$request->cubierta;
-        $venta->tipo_fuente= ' ' ;#$request->tipo_fuente;
+        $venta->tipo_fuente= '' ;#$request->tipo_fuente;
         $venta->linea_mar= '' ; #$request->linea_mar;
         $venta->num_cel= $request->num_cel; #$request->ref_1_num;
-        $venta->comp_cel=$request->ref_1_tel. "" .strtoupper(strtr($request->ref_1_com,$acentos));
+
+        $venta->comp_cel=$request->ref_1_tel;#ref_1_tel. "" .strtoupper(strtr($request->ref_1_com,$acentos));
         $venta->otra_comp_cel=strtoupper($request->otra_comp_cel);
         $venta->usuario=session('user');
         $venta->validador = $request->validador;
         $venta->nomb_com = strtoupper($request->nombre_empresa);
         $venta->giro_com = strtoupper($request->giro);
         $venta->rfc =strtoupper($request->rfc);
-        #$venta->estatus_people=2;
+        $venta->estatus_people=2;
+        
         $venta->estatus_people_1=strtr($request->estatus,$acentos);
         $venta->estatus_people_2=strtr($request->motivo,$acentos);
+        $venta->estatus_people_3=strtr($request->motivo,$acentos);
+        $venta->baseasd=5;
         $venta->save();
 
         $id=DB::table('inbursa_soluciones.ventas_soluciones')
@@ -140,16 +167,80 @@ class InbursaSolucionesController extends Controller{
               ->get();
         $folio=$id[0]->id;
 
-        // dd($venta,$folio);
+/*Telefono 2*/
+
+  /*
+        if (!empty($request->telefono2)) {
+          #$venta->idr = $request->idr;
+          $venta= new Inbursa_Soluciones();
+          $venta->telefono=$request->telefono2;
+          $venta->ap_paterno=strtoupper(strtr($request->ap_paterno,$acentos));
+          $venta->ap_materno=strtoupper(strtr($request->ap_materno,$acentos));
+          $venta->nombre=strtoupper(strtr($request->nombre,$acentos));
+          $venta->fech_nac=$request->fecnacaseg;
+          $venta->sexo=strtoupper($request->sexo);
+          $venta->edo_civil= 'NO APLICA' ;#$request->edocivil;
+          $venta->nom_conyuge= '' ;#strtoupper(strtr($request->nomconyuge,$acentos));;
+          $venta->fech_nac_conyuge= '' ;#$request->fechconyuge;
+          $venta->autoriza=strtoupper(strtr($request->autoriza,$acentos));
+          $venta->parentesco=strtoupper(strtr($request->parentesco,$acentos));
+          $venta->correo= strtoupper($request->correo);  #$venta->ap_paterno=strtoupper(strtr($request->ap_paterno,$acentos));
+          $venta->estatus='A';
+          $venta->fecha_capt=date('Y-m-d');
+          $venta->direccion=strtoupper(strtr($request->direccion,$acentos));
+          #$venta->num_ext=$request->num_ext;
+          $venta->vialidad=strtoupper(strtr($request->vialidad,$acentos));
+          $venta->vivienda= 'NEG'; #strtoupper(strtr($request->vivienda,$acentos));
+          $venta->num_int=$request->numint;
+          $venta->piso=$request->piso;
+          $venta->asentamiento=strtoupper(strtr($request->asentamien,$acentos));
+          $venta->estado=strtoupper(strtr($request->state,$acentos));
+          $venta->ciudad=strtoupper(strtr($request->town,$acentos));
+          $venta->colonia=strtoupper(strtr($request->col,$acentos));
+          $venta->cp=$request->cp;
+          $venta->calle_1= strtoupper(strtr($request->Calle_1, $acentos));
+          $venta->calle_2= 'NO PROPORCIONO';#strtoupper(strtr($request->Calle_2, $acentos));
+          $venta->ref_1= 'NO PROPORCIONO'; #strtoupper(strtr($request->ref_1,$acentos));
+          // $venta->ref_1=$request->ref_1_num. " " .$request->ref_1_tel. "" .strtoupper(strtr($request->ref_1_com,$acentos));
+          $venta->ref_2= 'NO PROPORCIONO'; # strtoupper(strtr($request->ref_2,$acentos));
+          $venta->rvt= session('user');#strtoupper(strtr($request->rvt,$acentos));
+          $venta->rvt_real= session('user');
+          $venta->turno=strtoupper($request->turno);
+          $venta->hora_ini=$request->hora_ini;
+          $venta->hora_fin=date('H:i:s');
+          $venta->num_pisos=$request->num_pisos;
+          $venta->cubierta=$request->cubierta;
+          $venta->tipo_fuente= '' ;#$request->tipo_fuente;
+          $venta->linea_mar= '' ; #$request->linea_mar;
+          $venta->num_cel= $request->num_cel; #$request->ref_1_num;
+
+          $venta->comp_cel=$request->ref_1_tel;#ref_1_tel. "" .strtoupper(strtr($request->ref_1_com,$acentos));
+          $venta->otra_comp_cel=strtoupper($request->otra_comp_cel);
+          $venta->usuario=session('user');
+          $venta->validador = $request->validador;
+          $venta->nomb_com = strtoupper($request->nombre_empresa);
+          $venta->giro_com = strtoupper($request->giro);
+          $venta->rfc =strtoupper($request->rfc);
+          $venta->estatus_people=2;
+          $venta->estatus_people_1=strtr($request->estatus,$acentos);
+          $venta->estatus_people_2=strtr($request->motivo,$acentos);
+          $venta->estatus_people_3=strtr($request->motivo,$acentos);
+          $venta->baseasd=5;
+          $venta->save();
+        }*/
+        
         return view('inbursaSoluciones.agente.confirm',compact('folio'));
     }
     else {
       $venta= new Inbursa_Soluciones();
+      #$venta->idr= $request->idr;
       $venta->usuario=session('user');
       $venta->telefono=$request->telefono;
       $venta->fecha_capt=date('Y-m-d');
       $venta->estatus_people_1=strtr($request->estatus,$acentos);
       $venta->estatus_people_2=strtr($request->motivo,$acentos);
+      $venta->estatus_people_3=strtr($request->motivo,$acentos);
+      $venta->baseasd=5;
       $venta->save();
 
     //    $venta->save();
@@ -158,8 +249,6 @@ class InbursaSolucionesController extends Controller{
     //          ->limit('1')
     //          ->get();
     //    $folio=$id[0]->id;
-
-
 
       // dd($venta,$folio);
       return redirect('/Inbursa_soluciones/inicioAgente');
@@ -173,10 +262,284 @@ class InbursaSolucionesController extends Controller{
   }
 
 
+  public function datosEmpresa(){
+
+    if (date("H:i") >= '09:00' && date("H:i") < '21:59') {
+      $datos = DB::table('inbursa_soluciones.base_empresas_3')
+        ->where([['indice', '=', null],
+                ['reus', '=', null],
+                ['venta', '=', null],
+                ['marcado', '=', null],
+                ['nunca', '=', null],
+                #['num_empleados', '<=', 50]
+                #['numero_base', '=', 7]
+              ])
+        ->whereIn('numero_base', [53,54,55])
+        ->whereIn('estado', ['AGS', 'CAMP', 'CHP', 'COA', 'COL', 'DUR', 'DGO', 'GTO', 'GRO', 'HGO', 'JAL', 'JALIS', 'MIC', 'MICH', 'MOR', 'NAY', 'JALIS', 'OAX', 'PUE', 'QRO', 'ROO', 'SLP', 'TAB', 'TAM', 'TAMPS', 'TLX', 'TLAX', 'VER', 'MOREL', 'YUC', 'ZAC', 'BCS', 'SIN', 'SON', 'CHIH', 'CHIS', 'COAH', 'COAHU', 'PUEBL', 'Q ROO', 'TLAXC', 'VERAC', 'YUCAT', 'MOREL', 'OAXAC', 'CHIHU'])
+        ->limit('1')
+        ->orderByRaw("rand()")
+        ->get();
+
+      DB::table('inbursa_soluciones.base_empresas_3')
+          ->where('id', '=', $datos[0]->id)
+          ->update(['marcado' => 1]);
+
+      return view('inbursaSoluciones.agente.datos_3', compact('datos'));
+
+    }elseif (date("H:i") >= '19:00' && date("H:i") < '19:59' ) {
+      $datos = DB::table('inbursa_soluciones.base_empresas_3')
+        ->where([['indice', '=', null],
+                ['reus', '=', null],
+                ['venta', '=', null],
+                ['marcado', '=', null],
+                ['nunca', '=', null],
+                #['num_empleados', '<=', 50]
+                ['numero_base', '=', 7]
+              ])
+        ->whereIn('estado', ['BCS', 'SIN'])
+        ->limit('1')
+        ->orderByRaw("rand()")
+        ->get();
+
+      DB::table('inbursa_soluciones.base_empresas_3')
+          ->where('id', '=', $datos[0]->id)
+          ->update(['marcado' => 1]);
+
+      return view('inbursaSoluciones.agente.datos_3', compact('datos'));
+
+    }elseif (date("H:i") >= '20:00' && date("H:i") <= '21:00') {
+      $datos = DB::table('inbursa_soluciones.base_empresas_3')
+        ->where([['indice', '=', null],
+                ['reus', '=', null],
+                ['venta', '=', null],
+                ['marcado', '=', null],
+                ['nunca', '=', null],
+                #['num_empleados', '<=', 50]
+                ['numero_base', '=', 7]
+              ])
+        ->whereIn('estado', ['SON', 'BC'])
+        ->limit('1')
+        ->orderByRaw("rand()")
+        ->get();
+
+      DB::table('inbursa_soluciones.base_empresas_3')
+          ->where('id', '=', $datos[0]->id)
+          ->update(['marcado' => 1]);
+
+      return view('inbursaSoluciones.agente.datos_3', compact('datos'));
+    } else{
+      return "Algo salio mal :(";
+    }
+
+
+
+    /* la chida
+    $datos = DB::table('inbursa_soluciones.base_empresas_3')
+        ->where([['indice', '=', null],
+                ['reus', '=', null],
+                ['venta', '=', null],
+                ['marcado', '=', null],
+                ['nunca', '=', null],
+                #['num_empleados', '<=', 50]
+                #['numero_base', '=', 5]
+              ])
+        ->whereNotIn('estado', ['DF', 'MEX'])
+      ->limit('1')
+      ->orderByRaw("rand()")
+      ->get();
+    */
+
+
+  /*este era el chido base de restringidos*/    
+  /*$datos = DB::table('inbursa_soluciones.base_empresas_2')
+      ->where([['indice', '=', null],
+                ['reus', '=', null],
+                #['venta', '=', null],
+                #['marcado', '=', null],
+                #['nunca', '=', null],
+                ['num_empleados', '>', 50],
+        #['numero_base', '=', 6]
+              ])
+    #->whereNotIn('estado', ['DF', 'MEX'])
+      ->limit('1')
+      ->orderByRaw("rand()")
+      ->get();
+  
+      DB::table('inbursa_soluciones.base_empresas_2')
+      ->where('id', '=', $datos[0]->id)
+      ->update(['marcado' => 1]);
+      return view('inbursaSoluciones.agente.datos', compact('datos'));
+    */
+  }
+
+
+/*
+ public function datosEmpresa2(){
+    $datos = DB::table('inbursa_soluciones.base_empresas')
+      ->where([['indice', '=', null],
+                ['reus', '=', null],
+                ['venta', '=', null],
+                ['marcado', '=', null]
+              ])
+      ->limit('1')
+      ->orderByRaw("rand()")
+      ->get();
+
+
+    $estado = DB::table('pc.cps')
+      ->select('clave_edo')
+      ->where('estado', $datos[0]->estado)
+      ->limit(1)
+      ->get();
+
+    $datos[0]->estado = $estado[0]->clave_edo;
+
+
+    DB::table('inbursa_soluciones.base_empresas')
+      ->where('id', '=', $datos[0]->id)
+      ->update(['marcado' => 1]);
+
+
+      return $datos;
+  }
+
+*/
+
+
+
+
+    public function datosEmpresaRestringidos(){
+
+    if (date("H:i") >= '09:00' && date("H:i") < '18:59') {
+      $datos = DB::table('inbursa_soluciones.base_empresas_3')
+        ->where('indice', '=', 1)
+        ->orwhere('nunca', '=', 1)
+        ->where('marcado', '=', null)
+        ->orwhere('reus', '=', 1
+                #['venta', '=', null], #['num_empleados', '<=', 50]
+                #['numero_base', '=', 7]
+              )
+        ->whereIn('estado', ['AGS', 'CAMP', 'CHP', 'COA', 'COL', 'DUR', 'GTO', 'GRO', 'HGO', 'JAL', 'MIC', 'MOR', 
+                  'NAY', 'NLE', 'OAX', 'PUE', 'QRO', 'ROO', 'SLP', 'TAB', 'TAM', 'TLX', 'VER', 'YUC', 'ZAC'])
+        ->limit('1')
+        ->orderByRaw("rand()")
+        ->get();
+
+      DB::table('inbursa_soluciones.base_empresas_3')
+          ->where('id', '=', $datos[0]->id)
+          ->update(['marcado' => 1]);
+
+      return view('inbursaSoluciones.agente.datos_3', compact('datos'));
+
+    }elseif (date("H:i") >= '19:00' && date("H:i") < '19:59' ) {
+      $datos = DB::table('inbursa_soluciones.base_empresas_3')
+        ->where('indice', '=', 1)
+        ->orwhere('nunca', '=', 1)
+        ->where('marcado', '=', null)
+        ->orwhere('reus', '=', 1
+                #['venta', '=', null], #['num_empleados', '<=', 50]
+                #['numero_base', '=', 7]
+              )
+        ->whereIn('estado', ['BCS', 'SIN'])
+        ->limit('1')
+        ->orderByRaw("rand()")
+        ->get();
+
+      DB::table('inbursa_soluciones.base_empresas_3')
+          ->where('id', '=', $datos[0]->id)
+          ->update(['marcado' => 1]);
+
+      return view('inbursaSoluciones.agente.datos_3', compact('datos'));
+
+    }elseif (date("H:i") >= '20:00' && date("H:i") <= '21:00') {
+      $datos = DB::table('inbursa_soluciones.base_empresas_3')
+        ->where('indice', '=', 1)
+        ->orwhere('nunca', '=', 1)
+        ->where('marcado', '=', null)
+        ->orwhere('reus', '=', 1
+                #['venta', '=', null], #['num_empleados', '<=', 50]
+                #['numero_base', '=', 7]
+              )
+        ->whereIn('estado', ['SON', 'BC'])
+        ->limit('1')
+        ->orderByRaw("rand()")
+        ->get();
+
+      DB::table('inbursa_soluciones.base_empresas_3')
+          ->where('id', '=', $datos[0]->id)
+          ->update(['marcado' => 1]);
+
+      return view('inbursaSoluciones.agente.datos_3', compact('datos'));
+    } else{
+      return "Horario Incorrecto o ya no tienes base :(";
+    }
+
+
+
+    /* la chida
+    $datos = DB::table('inbursa_soluciones.base_empresas_3')
+        ->where([['indice', '=', null],
+                ['reus', '=', null],
+                ['venta', '=', null],
+                ['marcado', '=', null],
+                ['nunca', '=', null],
+                #['num_empleados', '<=', 50]
+                #['numero_base', '=', 5]
+              ])
+        ->whereNotIn('estado', ['DF', 'MEX'])
+      ->limit('1')
+      ->orderByRaw("rand()")
+      ->get();
+    */
+
+
+  /*este era el chido base de restringidos*/    
+  /*$datos = DB::table('inbursa_soluciones.base_empresas_2')
+      ->where([['indice', '=', null],
+                ['reus', '=', null],
+                #['venta', '=', null],
+                #['marcado', '=', null],
+                #['nunca', '=', null],
+                ['num_empleados', '>', 50],
+        #['numero_base', '=', 6]
+              ])
+    #->whereNotIn('estado', ['DF', 'MEX'])
+      ->limit('1')
+      ->orderByRaw("rand()")
+      ->get();
+
+      DB::table('inbursa_soluciones.base_empresas_2')
+      ->where('id', '=', $datos[0]->id)
+      ->update(['marcado' => 1]);
+      return view('inbursaSoluciones.agente.datos', compact('datos'));
+    */
+  }
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+
 
 
 
   public function DatosLlamada($value=''){
+    
     #dd(phpinfo());
     #dd(session('extension'));
     $inbursa=InbursaSolucionesRules::where([
@@ -213,7 +576,12 @@ class InbursaSolucionesController extends Controller{
   }
 
 
-
+  public function validaVenta($value=''){
+    $r1=DB::table("inbursa_soluciones.ventas_soluciones")->where("telefono",$value)->get();
+    $total=count($r1);
+    dd($r1, $total);
+    return $total;
+  }
 
 
 
@@ -239,8 +607,6 @@ class InbursaSolucionesController extends Controller{
   public function UpdateFromularioInbSoluciones(Request $request){
 
     
-
-
     $acentos=array ( 'Ã¡'=>'a', 'Ã©'=>'e', 'Ã­'=>'i', 'Ã³'=>'o', 'Ãº'=>'u', 'Ã'=>'A', 'Ã‰'=>'E', 'Ã'=>'I', 'Ã“'=>'O', 'Ãš'=>'U', "'"=>'', '"'=>'' );
     $datos= Inbursa_Soluciones::find($request->id);
     $datos->telefono=$request->telefono;
@@ -255,7 +621,7 @@ class InbursaSolucionesController extends Controller{
     $datos->fecha_capt=$request->fecha_capt;
     $datos->direccion=strtoupper(strtr($request->direccion,$acentos));
     $datos->vialidad=strtoupper(strtr($request->vialidad,$acentos));
-    $datos->vivienda=strtoupper(strtr($request->vivienda,$acentos));
+    $datos->vivienda = 'NEG'; #$datos->vivienda=strtoupper(strtr($request->vivienda,$acentos));
     $datos->num_int=strtoupper(strtr($request->num_int,$acentos));
     $datos->piso=strtoupper(strtr($request->piso,$acentos));
     $datos->asentamiento=strtoupper(strtr($request->asentamiento,$acentos));
@@ -274,10 +640,10 @@ class InbursaSolucionesController extends Controller{
     $datos->nomb_com=$request->nombre_empresa;
     $datos->giro_com=$request->giro;
     $datos->rfc=$request->rfc;
-
+    $datos->fecha_validacion=date('Y-m-d');
     $datos->estatus_people_2=$request->estatus;
 
-    #$request->estatus == 'Venta' ? $datos->estatus_people=1 : $datos->estatus_people=2;
+    $request->estatus == 'Venta' ? $datos->estatus_people=1 : $datos->estatus_people=2;
 
     $datos->validador=$request->validador;
     $datos->save();
@@ -311,7 +677,7 @@ class InbursaSolucionesController extends Controller{
         $datos = Db::table('inbursa_soluciones.ventas_soluciones')
                 ->select('id', 'telefono', 'fecha_capt', 'estatus_people_2', 'subido', 'estatusSubido', 'rvt')
                 ->where('fecha_capt', $request->fecha)
-                #->where('estatus_people', 1)
+                ->where('estatus_people', 1)
                 ->where('estatus_people_2', 'Venta')
                 ->get();
 

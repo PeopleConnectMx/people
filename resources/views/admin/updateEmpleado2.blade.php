@@ -239,7 +239,7 @@
                     {{ Form::label('Sucursal *','',array('class'=>"col-sm-2 control-label")) }}
                     <div class="col-sm-10">
                         {{ Form::select('sucursal', [
-                        'Zapata'=>'Zapata'],
+                        'Sevilla'=>'Sevilla'],
                         $datosCandidato[0]->sucursal, ['required' => 'required','class'=>"form-control", 'placeholder'=>""]  ) }}
                     </div>
                 </div>
@@ -264,7 +264,8 @@
                         'Inactivo' => 'Inactivo',
                         'Activo' => 'Activo',
                         'Capacitación' => 'Capacitación',
-                        'Candidato' => 'Candidato'],
+                        'Candidato' => 'Candidato',
+                        'Fantasma' => 'Fantasma'],
                     $user[0]->estatus, ['required' => 'required', 'class'=>"form-control", 'placeholder'=>""]  ) }}
                     </div>
                 </div>

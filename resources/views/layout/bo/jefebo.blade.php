@@ -46,6 +46,7 @@
                                 <li><a href="{{ url('/banamex/backoffice') }}">Back-Office Banamex</a></li>
                                 <li><a href="{{ url('/bo/asigna_base') }}">Asigna Base</a></li>
                                 <li><a href="{{ url('/bo/base_wa') }}">Genera Base WhatsApp</a></li>
+                                <li><a href="{{ url('/bo/subeArchivoIngresos') }}">Sube Archivo de Ingresos para BO</a></li>
                             </ul>
                         </li>
                         <li class="dropdown">

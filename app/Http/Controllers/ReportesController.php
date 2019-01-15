@@ -3320,8 +3320,10 @@ class ReportesController extends Controller {
 
 /* Reportes de proyeccion --Master-- */
     public function ProyeccionPrepago($f=''){
+      
       $rfechas=DB::table('reportes.proyecciones')->select(DB::raw('year(fecha) as a,month(fecha) as m'))->groupBy(DB::raw('year(fecha),month(fecha)'))->get();
-      #dd($rfechas);
+      
+      
       $menu = $this->menu();
       $mf = new \DateTime($f);
       $mf->modify('first day of this month');
@@ -3334,6 +3336,7 @@ class ReportesController extends Controller {
       $tmpreposm=[];
       $pmr=[];
       $tmpreposm_data=DB::table('reportes.proyecciones')->where(['met'=>'pos','camp'=>'tmpre', 'turno'=>'m'])->get();
+
       foreach ($tmpreposm_data as $key => $value) {
         $tmpreposm[$value->fecha]=$value->val;
       }
@@ -3344,7 +3347,7 @@ class ReportesController extends Controller {
           'puesto'=>'Operador de call center',
           'turno'=>'Matutino'
         ])
-        ->whereBetween('fecha',['2017-08-01','2017-08-31'])
+        ->whereBetween('fecha',[$fi,$ff])
         ->groupBy('fecha')->get();
 
         foreach ($posmat as $key => $value) {
@@ -3628,7 +3631,7 @@ class ReportesController extends Controller {
       }
       #dd($altas_mat, $altas_ves);
 
-
+      
       return view('admin.proyeccionprepago', compact('menu', 'fi','ff','rfechas',
                                                       'tmpreposm', 'tmpreposv', 'tmpreposg',
                                                       'tmprevphm', 'tmprevphv', 'tmprevphg',
@@ -3647,6 +3650,19 @@ class ReportesController extends Controller {
                                                       'numaltas_ves', 'numaltas_mat', 'altas_ves', 'altas_mat'
                                                     ));
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public function ProyeccionPospago($value=''){
@@ -4708,6 +4724,8 @@ aprobadas preasignadas autenticadas
             case 'Jefe de administracion': $menu = "layout.rh.admin";
                 break;
             case 'Jefe de Reclutamiento': $menu = "layout.rh.jefeRecluta";
+                break;
+            case 'Supervisor': $menu = "layout.tmpre.super.inicio";
                 break;
             default: $menu = "layout.error.error";
                 break;

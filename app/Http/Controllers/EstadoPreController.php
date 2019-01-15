@@ -33,7 +33,6 @@ class EstadoPreController extends Controller
   }
 
   public function lobby(){
-      dd('asd');
     return view('/tm/pre/estadoAgente');
   }
 

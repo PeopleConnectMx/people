@@ -1,5 +1,10 @@
 @extends('layout.tmpre.basic')
 @section('content')
+
+
+
+
+
 <div class="container-fluid">
   <div class="row">
     <div class="panel panel-default col-md-8 col-md-offset-2">
@@ -13,7 +18,11 @@
                     ]) }}
           <fieldset>
             <legend>Operaciones</legend>
-            <div class="alert alert-dismissible alert-danger" hidden="" id="msg"></div>
+
+                  <button type="button" class="btn btn-info" onclick="datosTelefonica()" data-toggle="modal" data-target="#myModal">Obtener datos</button>
+				   
+
+            
             <div class="form-group" id="phonediv">
               <label for="" class="col-lg-2 control-label">Teléfono</label>
               <div class="col-lg-7">
@@ -64,11 +73,31 @@
 
 </div>
 
+
+
+
+
+
 <style media="screen">
   .close{
     margin-right: 5%;
   }
 </style>
+
+<script type="text/javascript">
+  
+  function datosTelefonica() {
+    var url="{{URL('/prepago/datos')}}";
+    $.get( url, function( data ) {
+      $("#telefono-asterisk").val(data.data);
+	  console.log(data.data);
+	  alert(data.data);
+    });
+  }
+
+
+</script>
+
 
 @endsection
 @section('content2')
@@ -98,6 +127,7 @@ $("#telefono").change(function () {
     cerrar();
   }
 });
+
 $( "#st1" ).change(function () {
   var valorEst = $("#st1").val();
   if(valorEst=="No contacto"){
@@ -139,12 +169,15 @@ $( "#st1" ).change(function () {
     var option3 = $('<option></option>').attr("value", "Linea Fija").text("Linea Fija");
     var option4 = $('<option></option>').attr("value", "DN gestionado por otro Call Center").text("DN gestionado por otro Call Center");
     var option5 = $('<option></option>').attr("value", "Ya tiene linea movistar").text("Ya tiene linea movistar");
+    var option6 = $('<option></option>').attr("value", "Línea Empresarial").text("Línea Empresarial");
+    
     $("#st2").append(option0);
     $("#st2").append(option1);
     $("#st2").append(option2);
     $("#st2").append(option3);
     $("#st2").append(option4);
     $("#st2").append(option5);
+    $("#st2").append(option6);
     $("#st3").empty();
   }
   else {
@@ -196,7 +229,7 @@ $("#validatelrep").click(function(){
   var valor = $("#telefono").val();
   if(valor.length==10){
   $("#validatelrep").prop('disabled', true);
-  $.get('/tm/repep/buscar/' + $('#telefono').val() + '' ,function(response){
+  $.get('tm/repep/buscar/' + $('#telefono').val() + '' ,function(response){
 		if (response==0) {
 		    $("#subguardar").prop('disabled', false);
         $("#st1").prop('disabled', false);
@@ -218,5 +251,11 @@ $("#validatelrep").click(function(){
 });
 
 
+  document.getElementById("subguardar").style.display='none';
+
+
 </script>
+
+
+
 @endsection

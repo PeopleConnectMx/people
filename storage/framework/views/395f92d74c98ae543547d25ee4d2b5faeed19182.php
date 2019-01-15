@@ -421,7 +421,7 @@ function LlenarSelect()
     }
 
     function ListaDes3(){
-      opcion0=new Option("Analista de Calidad","Analis de Calidad","defauldSelected");
+      opcion0=new Option("Analista de Calidad","Analista de Calidad","defauldSelected");
       opcion1=new Option("Jefe de Calidad","Jefe de Calidad");
 
       document.forms.formulario.puesto.options[0]=opcion0;

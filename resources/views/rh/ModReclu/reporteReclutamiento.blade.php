@@ -38,9 +38,7 @@
                     {{ Form::label('Sucursal','',array('class'=>"col-sm-2 control-label")) }}
                     <div class="col-sm-10">
                         {{ Form::select('sucursal', [
-                        'Zapata'=>'Zapata',
-                        'Roma'=>'Roma',
-                        'Parque_lira'=>'Parque Lira'],
+                        'Sevilla'=>'Sevilla'],
                         null, ['class'=>"form-control", 'placeholder'=>""]  ) }}
                     </div>
                 </div>

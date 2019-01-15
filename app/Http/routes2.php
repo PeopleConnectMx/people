@@ -11,6 +11,120 @@
   |
  */
 //
+/*V2*/
+use App\Model\Cps;
+Route::get('/home/peopleconnect',  function(){
+  return view('a.inicio');
+});
+
+//json de eymmy
+Route::get('/Ventas_Vidatel_actual',  [
+    'uses' => 'InbursaVidatelController@JsonVentasVidatel'
+]);
+
+
+/*Calidad inbursa*/
+Route::get('/Inbursa/Calidad/Audios/Inicio',  [
+    'uses' => 'V2\Inbursa\CalidadController@InicioAudios'
+]);
+Route::post('/Inbursa/Calidad/Audios/Lista',  [
+    'uses' => 'V2\Inbursa\CalidadController@ListaAudios'
+]);
+Route::get('/Inbursa/Calidad/Audios/{id}',  [
+    'uses' => 'V2\Inbursa\CalidadController@VerAudios'
+]);
+Route::post('/Inbursa/Calidad/Audios/Guardar',  [
+    'uses' => 'V2\Inbursa\CalidadController@CalidadAudiosGuardar'
+]);
+
+Route::get('/Inbursa/Calidad/Ventas/Inicio',  [
+    'uses' => 'V2\Inbursa\CalidadController@InicioVentas'
+]);
+Route::post('/Inbursa/Calidad/Ventas/Lista',  [
+    'uses' => 'V2\Inbursa\CalidadController@ListaVentas'
+]);
+Route::get('/Inbursa/Calidad/Ventas/{id}',  [
+    'uses' => 'V2\Inbursa\CalidadController@VerVentas'
+]);
+Route::post('/Inbursa/Calidad/Ventas/Guardar',  [
+    'uses' => 'V2\Inbursa\CalidadController@CalidadVentasGuardar'
+]);
+/*Fin calidad inbursa*/
+
+/*Operaciones inbursa*/
+Route::get('/Inbursa/Operaciones/Agente/Inicio',  [
+    'uses' => 'V2\Inbursa\OperadorController@Inicio',
+    'middleware' => 'acceso'
+]);
+Route::post('/Inbursa/Operaciones/Agente/Guardar', [
+    'uses' => 'V2\Inbursa\OperadorController@GuardaFormulario'
+]);
+Route::get('/Inbursa/buscar/venta/{dn}',  [
+    'uses' => 'V2\Inbursa\OperadorController@BuscarVenta'
+]);
+
+/*Fin operaciones inbursa*/
+
+/*Reportes inbursa*/
+Route::get('/Inbursa/Reportes/Envio/Ventas/Inicio',  [
+    'uses' => 'V2\Inbursa\ReportesController@InicioVentas'
+]);
+Route::post('/Inbursa/Reportes/Envio/Ventas/Guardar',  [
+    'uses' => 'V2\Inbursa\ReportesController@SubirVentas'
+]);
+
+Route::get('/Inbursa/Reportes/Envio/Validaciones/Inicio',  [
+    'uses' => 'V2\Inbursa\ReportesController@InicioValidaciones'
+]);
+Route::post('/Inbursa/Reportes/Envio/Validaciones/Guardar',  [
+    'uses' => 'V2\Inbursa\ReportesController@SubirValidaciones'
+]);
+
+Route::get('/Inbursa/Reportes/Envio/Rechazos/Inicio',  [
+    'uses' => 'V2\Inbursa\ReportesController@InicioRechazos'
+]);
+Route::post('/Inbursa/Reportes/Envio/Rechazos/Guardar',  [
+    'uses' => 'V2\Inbursa\ReportesController@SubirRechazos'
+]);
+
+/*Fin reportes inbursa*/
+
+
+Route::get('/Inbursa/OperadorCallCenter/Inicio',  [
+    'uses' => 'V2\Inbursa\OperadorController@Test'
+]);
+
+/*Fin V2*/
+
+
+
+
+/****************************************************************************/
+#Soluciones ftp ventas rechazos 
+/****************************************************************************/
+
+Route::get('/InbursaSoluciones/Reportes/Envio/Ventas/Inicio',  [
+    'uses' => 'V2\Soluciones\ReportesSolucionesController@InicioVentas'
+]);
+
+Route::post('/InbursaSoluciones/Reportes/Envio/Ventas/Guardar',  [
+    'uses' => 'V2\Soluciones\ReportesSolucionesController@SubirVentas'
+]);
+
+Route::get('/InbursaSoluciones/Reportes/Envio/Validaciones/Inicio',  [
+    'uses' => 'V2\Soluciones\ReportesSolucionesController@InicioValidaciones'
+]);
+
+Route::post('/InbursaSoluciones/Reportes/Envio/Validaciones/Guardar',  [
+    'uses' => 'V2\Soluciones\ReportesSolucionesController@SubirValidaciones'
+]);
+
+/*****************************************************************************/
+
+
+
+
+
 
 Route::get('/BienvenidoPeople', function () {
     return view('Bienvenida');
@@ -167,6 +281,141 @@ Route::post('/BoBanamexCaptura', [
 
 
 
+
+
+/********************* Inbursa Soluciones *****************************/
+/**********************************************************************/
+/**********************************************************************/
+
+Route::get('/Inbursa_soluciones/inicioAgente', [
+    'uses' => 'InbursaSolucionesController@inicio'
+    ]);
+
+Route::post('/Inbursa_soluciones/agente/insert', [
+    'uses' => 'InbursaSolucionesController@FromularioInbSoluciones'
+]);
+
+Route::get('/Inbursa_soluciones/municipios/{id}', [
+    'uses' => 'InbursaSolucionesController@municipios',
+]);
+
+Route::get('/Inbursa_soluciones/colonias/{id}/{id2}', [
+    'uses' => 'InbursaSolucionesController@colonias',
+]);
+
+Route::get('/Inbursa_soluciones/codpos/{id}/{id2}/{id3}', [
+    'uses' => 'InbursaSolucionesController@codpos',
+]);
+
+Route::get('/Inbursa_soluciones/agente/downsession', [
+    'uses' => 'InbursaVidatelController@downsession'
+]);
+
+Route::get('/InbursaSoluciones/buscar/venta/{dn}',  [
+    'uses' => 'V2\Inbursa\OperadorController@BuscarVentaSoluciones'
+]);
+
+
+Route::get('/Inbursa_soluciones/datosEmpresa', [
+    'uses' => 'InbursaSolucionesController@datosEmpresa'
+    ]);
+
+Route::get('/Inbursa_soluciones/datosEmpresaRestringidos', [
+    'uses' => 'InbursaSolucionesController@datosEmpresaRestringidos'
+]);
+
+Route::get('/Inbursa_soluciones/datosEmpresa2', [
+    'uses' => 'InbursaSolucionesController@datosEmpresa2'
+]);
+
+
+
+
+        /*inbursa soluciones validador*/
+
+Route::get('/Inbursa_soluciones/validacion', [
+    'uses' => 'InbursaSolucionesController@InicioValSoluciones'
+]);
+
+Route::post('/Inbursa_soluciones/validacion/valida', [
+    'uses' => 'InbursaSolucionesController@ValidaFolio'
+]);
+
+Route::post('/Inbursa_soluciones/validacion/updatedatos', [
+    'uses' => 'InbursaSolucionesController@UpdateFromularioInbSoluciones'
+]);
+
+        /*****************************/
+		
+        /*Inbursa soluciones Supervisor*/
+Route::get('/Inbursa_soluciones/reportes', [
+    'uses' => 'ReportesInbursaSolucionesController@Reportes'
+]);
+
+Route::post('Inbursa_soluciones/reportes2', [
+    'uses' => 'ReportesInbursaSolucionesController@tipoReporte'
+]);
+
+Route::post('Inbursa_solucionesInbursa/reportes/VentasDia', [
+    'uses' => 'ReportesInbursaSolucionesController@VentasDia'
+]);
+
+Route::post('Inbursa_soluciones/reportes/ventasCompleto', [
+    'uses' => 'ReportesInbursaSolucionesController@VentasCompleto'
+]);
+
+Route::post('Inbursa_soluciones/reportes/ventasTotales', [
+    'uses' => 'ReportesInbursaSolucionesController@VentasTotales'
+]);
+
+Route::post('Inbursa_soluciones/reportes/EstatusDos', [
+    'uses' => 'ReportesInbursaSolucionesController@StatusDos'
+]);
+
+
+
+        /*******************************/
+		
+		
+		/*Inbursa Soluciones Edicion*/
+
+Route::get('/edicionSoluciones', [
+    'uses' => 'InbursaSolucionesController@Ventas',
+    'middleware' => 'acceso'
+]);
+
+Route::post('/edicionSoluciones', [
+    'uses' => 'InbursaSolucionesController@DatosVentas',
+    'middleware' => 'acceso'
+]);
+
+Route::get('edicionSoluciones3/{telefono}/{fecha_capt}/{id}/{estatusSubido}', [
+    'uses' => 'InbursaSolucionesController@Audios',
+    'middleware' => 'acceso'
+]);
+
+Route::post('/uploadSoluciones', ['uses' => 'InbursaSolucionesController@Archivo']);
+
+        /*******************************/
+		
+		
+		
+		
+
+Route::get('/inbursaSoluciones/llamadas/datos', [
+  'uses' => 'InbursaSolucionesController@DatosLlamada'
+]);
+
+/********************************************************************/
+/*********************** fin inbursa soluciones *********************/
+
+
+
+
+
+
+
+
 Route::get('/InbursaVidatel/agente', [
     'uses' => 'InbursaVidatelController@inicio',
     'middleware' => 'acceso'
@@ -233,6 +482,10 @@ Route::post('InbursaVidatel/reportes/ventasTotales', [
     'uses' => 'ReportesInbursaVidatel@VentasTotales'
 ]);
 
+
+Route::get('/InbursaVidatel/datosEmpresaVidatel', [
+    'uses' => 'InbursaVidatelController@datosEmpresa'
+]);
 
 
 
@@ -831,7 +1084,10 @@ Route::post('/recuperacionBanamex/guardar', [
 
 
 
-
+Route::get('/EdicionTipifica', [
+    'uses' => 'EdicionController@repTipificacionFecha',
+    'middleware' => 'acceso'
+]);
 
 
 /* --------------------------- Edicion -----------------------erik- */
@@ -842,6 +1098,10 @@ Route::get('/edicion1', [
 ]);
 Route::post('/edicion2', [
     'uses' => 'InbursaController@DatosVentas',
+    'middleware' => 'acceso'
+]);
+Route::get('/edicion2', [
+    'uses' => 'V2\Inbursa\EdicionController@Inicio',
     'middleware' => 'acceso'
 ]);
 //
@@ -1155,10 +1415,10 @@ Route::group(['middleware' => ['Mapfre'], 'prefix' => 'Mapfre'], function() {
 
     Route::post('/mapfre/actualizacion/salvar', 'Mapfre2Controller@Salvar');
 
-    Route::post('inicioMpafre', [
-        'as' => 'inicio',
-        'uses' => 'LoginController@NewSession'
-    ]);
+    // Route::post('inicioMpafre', [
+    //     'as' => 'inicio',
+    //     'uses' => 'LoginController@NewSession'
+    // ]);
 
     Route::get('Mapfre/Agente', [
         'uses' => 'MapfreController@Index'
@@ -2153,25 +2413,26 @@ Route::group(['middleware' => ['web']], function () {
             return view('tm.pre.predictivo');
         }]);
 
-    // Route::get('/tm/pre/estadoAgente', [
-    //     'middleware' => 'acceso',
-    //     'uses' => 'EstadoPreController@inicio'
-    // ]);
+     /*Route::get('/tm/pre/estadoAgente', [
+         'middleware' => 'acceso',
+         'uses' => 'EstadoPreController@inicio'
+     ]);*/
     Route::get('/tm/pre/estadoAgente', [
         'middleware' => 'acceso', function () {
             return view('tm.pre.estadoAgente');
         }]);
+
     Route::get('/tm/pre/estadoAgente/lobby', [
         'middleware' => 'acceso',
         'uses' => 'EstadoPreController@lobby'
     ]);
     Route::get('/tm/repep/buscar/{id}', [
         'middleware' => 'acceso',
-        'uses' => 'EstadoPreController@ValidaRepep'
+        'uses' => 'EstadoPosController@ValidaRepep'
     ]);
     Route::get('/tm/repep/nuevo/{id}', [
         'middleware' => 'acceso',
-        'uses' => 'EstadoPreController@NuevoRepep'
+        'uses' => 'EstadoPosController@NuevoRepep'
     ]);
     /*  bathroom    */
     Route::get('/tm/pre/estadoAgente/upbathroom', [
@@ -2233,7 +2494,17 @@ Route::group(['middleware' => ['web']], function () {
         'uses' => 'TmVentasController@TmPosStatusSave'
     ]);
 
+	
+	
     /* Estado TM Pospago */
+	
+	
+	Route::get('/prepago/datos', [
+		'uses' => 'TmVentasController@DatosLlamada'
+    ]);
+
+	
+	
 
     Route::get('/tm/pos/inicio', [
         'uses' => 'TmVentasController@Iniciopos'
@@ -2983,12 +3254,25 @@ Route::post('rh/save/candidato_2', [
     'uses' => 'RhController@Candidato_2',
     'middleware' => 'acceso'
 ]);
-Route::get('municipios', function() {
-    $id = Input::get('option');
-    dd($id);
+Route::get('/municipios/{id}', function($id) {
+    // $id = Input::get('option');
+    // dd($id);
     $municipios = Cps::where('clave_edo', $id);
     return $municipios->lists('municipio', 'municipio');
 });
+
+Route::get('/colonias/{edo}/{mun}', function($edo,$mun) {
+    $municipios = Cps::where(['clave_edo' => $edo, 'municipio'=>$mun]);
+    #dd($municipios);
+    return $municipios->lists('asentamiento', 'asentamiento');
+});
+
+Route::get('/codpos/{edo}/{mun}/{col}', function($edo,$mun,$col) {
+    $municipios = Cps::where(['clave_edo' => $edo, 'municipio'=>$mun, 'asentamiento'=>$col]);
+    #dd($municipios);
+    return $municipios->lists('codigo', 'codigo');
+});
+
 Route::get('rh/candidato/municipios/{id}', [
     'uses' => 'RhController@municipios',
     'middleware' => 'acceso'
@@ -3666,8 +3950,7 @@ Route::post('/reporteBajas/datos', [
 ]);
 /* -------------- */
 
-Route::post('inicio', [
-    'as' => 'inicio',
+Route::post('/inicio', [
     'uses' => 'LoginController@newsession'
 ]);
 Route::get('update/password/{id}', function ($id = '') {
@@ -4502,3 +4785,80 @@ Route::get('/inbursa/llamadas/datos', [
 Route::get('/inbursa/llamadas/datos/web', [
   'uses' => 'InbursaVidatelController@DatosLlamadaWeb'
 ]);
+
+
+Route::get('inicioEthics', [
+    'uses' => 'EthicsController@inicio',
+    'middleware' => 'acceso'
+]);
+
+Route::post('guardarEthics', [
+    'uses' => 'EthicsController@guarda',
+    'middleware' => 'acceso'
+    ]);
+
+Route::get('ethicspuesto/{empresa}', [
+        'uses' => 'EthicsController@puestos',
+        'middleware' => 'acceso'
+    ]);
+
+Route::get('ethicsscript/{empresa}/{puesto}', [
+        'uses' => 'EthicsController@obtieneScript',
+        'middleware' => 'acceso'
+    ]);
+
+Route::get('/ethics/audio', [
+        'uses' => 'EthicsController@Audio',
+        'middleware' => 'acceso'
+    ]);
+
+Route::get('/ethics/reporte', [
+        'uses' => 'EthicsController@Reporte',
+        'middleware' => 'acceso'
+    ]);
+Route::get('/ethics/reporte/datos/{fecha}', [
+        'uses' => 'EthicsController@ReporteDatos',
+        'middleware' => 'acceso'
+    ]);
+Route::get('/ethics/reporte/descarga/{fecha}/{audio}', [
+        'uses' => 'EthicsController@DescargaAudios',
+        'middleware' => 'acceso'
+    ]);
+
+Route::get('/descargaBancomer/{folio}', [
+    'uses' => 'BancomerController@inicioBuscaAudio'
+    ]);
+
+
+    Route::post('message', function(Request $request) {
+
+        $user = Auth::user();
+
+        $message = ChatMessage::create([
+            'user_id' => $user->id,
+            'message' => $request->input('message')
+        ]);
+
+        event(new ChatMessageWasReceived($message, $user));
+
+
+    });
+
+    Route::get('/chat', function (){
+      return view('chat');
+    });
+    Route::get('/monitor/tmprepago/event', [
+      'uses'=>'MyEventsController@MonitorPrepago'
+    ]);
+    Route::get('/monitor/tmprepago', function (){
+      # code...
+      return view('rep.monitorTmPrepago');
+    });
+
+    Route::get('/monitor/inbursa/event', [
+      'uses'=>'MyEventsController@MonitorInbursa'
+    ]);
+    Route::get('/monitor/inbursa', function (){
+      # code...
+      return view('rep.monitorInbursa');
+    });

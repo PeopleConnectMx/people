@@ -27,7 +27,7 @@
                                 </div>
                                 <div class="col-lg-2">
                                   {{ Form::select('', [
-                                  "Activo"=>"Activo","Inactivo"=>"Inactivo"
+                                  "Activo"=>"Activo","Inactivo"=>"Inactivo","Fantasma"=>"Fantasma"
                                   ],null, ['class'=>"form-control", "placeholder"=>"Estado","id"=>"status"] ) }}
                                 </div>
                               </div>
@@ -50,7 +50,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- @foreach($users as $user)
+<!--
+                                     @foreach($users as $user)
                                     <tr >
                                         <td>{{ $user->paterno }} {{ $user->materno }} {{ $user->nombre }}</td>
                                         <td>Activo</td>
@@ -64,7 +65,6 @@
                                             <button type="button" value="Eliminar" class="btn btn-danger glyphicon glyphicon-trash"
                                              onclick='elim("{{$user->id}}","{{$user->paterno}}","{{$user->materno}}","{{$user->nombre}}")'>  </button>
                                         </td>
-
 
                                     </tr>
                                     @endforeach -->
@@ -91,9 +91,11 @@
         <script>
             function elim(id, paterno, materno, nombre){
                 //un confirm
+                console.log('entrando0');
                 alertify.confirm("<h1>¿Esta seguro que desea eliminar a:?<br>"+id+" "+nombre+" "+paterno+" "+materno+" </h1>", function (e) {
                     if (e) {
                         //window.locationf="Administracion/admin/delete/"+;
+
                         alertify.success("Has pulsado '" + alertify.labels.ok + "'");
                         location.href='/Administracion/admin/delete/'+id;
                     } else { alertify.error("Has pulsado '" + alertify.labels.cancel + "'");
@@ -104,11 +106,13 @@
 
 
             $.getJSON("/Administracion/plantilla/ajax", callbackFuncWithData);
+            
             function callbackFuncWithData(data){
 
              $('#dataTables-example').dynatable({
                 dataset: {
                   records: data
+                  console.log(data);
                 },
                 features: {
                   paginate: true,

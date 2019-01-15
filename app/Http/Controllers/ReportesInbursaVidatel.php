@@ -124,8 +124,9 @@ class ReportesInbursaVidatel extends Controller {
                 ->where([
                   'viv.fecha_envio' => $request->fecha, 
                   #'viv.fechaSubido' => $request->fecha, 
-					'viv.estatus_people_2'=>'Venta', ])
+					'viv.estatus_people_2'=>'Venta',  ])
                 ->whereIn('viv.estatusSubido',['Aceptada', 'Rechazada'])
+				#->where('erik', 1)
                 ->get();
 
 

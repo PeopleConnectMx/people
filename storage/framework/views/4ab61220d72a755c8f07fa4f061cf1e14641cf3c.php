@@ -510,7 +510,7 @@ $hora=date('H:i:s');
 
 function validar() {
     if($('#motivo').val() == 'Mascarilla no venta' || $('#motivo').val() == 'Mascarilla venta'){
-    if($('#contra').val() != '71028102'){
+    if($('#contra').val() != '16131714'){
       return false;
     }
   }

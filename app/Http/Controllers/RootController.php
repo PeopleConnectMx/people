@@ -220,7 +220,7 @@ class RootController extends Controller {
                 ->select('empleados.id', 'empleados.nombre_completo')
                 ->join('usuarios', 'usuarios.id', '=', 'empleados.id')
                 ->where(['area' => 'Reclutamiento', 'usuarios.active' => true])
-                ->whereIn('puesto', array('Ejecutivo de cuenta', 'Coordinador de reclutamiento', 'Social Media Manager'))
+                ->whereIn('puesto', array('Ejecutivo de cuenta citas Jr', 'Ejecutivo de cuenta citas Sr', 'Ejecutivo de cuenta entrevistas Jr', '           Ejecutivo de cuenta entrevistas Sr', 'Coordinador de reclutamiento', 'Jefe de Reclutamiento'))
                 ->orderBy('nombre_completo', 'asc')
                 ->pluck('nombre_completo', 'id');
 
@@ -1144,16 +1144,22 @@ class RootController extends Controller {
                 $res=array_merge($top, $fechaValue);
                 $datos=DB::table('asistencias as a')
                          ->select('c.id','c.nombre_completo','emp.nombre_completo as supervisor','c.area','c.puesto','c.campaign','c.turno', 'emp.user_ext',
-                         'c.fecha_capacitacion',DB::raw("if(u.active=true,'Activo','Inactivo') as estatus,time(a.created_at) as hora"),'a.fecha')
+                         'c.fecha_capacitacion', 
+                            'em.estatus',
+                            #DB::raw("if(u.active=true,'Activo','Inactivo') as estatus"),
+                            DB::raw("time(a.created_at) as hora"),
+                            'a.fecha', 'em.user_ext')
                          ->join('candidatos as c','a.empleado','=','c.id')
-                         ->join('usuarios as u','u.id','=','c.id')
+                         ->join('usuarios as u','u.id','=','c.id') 
+                         ->join('empleados as em', 'u.id','=','em.id')
                          ->leftjoin('empleados as emp', 'emp.id', '=', 'a.supervisor')
                          ->where([['c.area','like',$area],['c.campaign','like',$campaign],['c.turno','like',$turno],'u.active'=>true])
                          ->whereBetween('a.fecha',[$request->inicio,$request->fin])
                          ->get();
+
                 $arr=array();
                 foreach ($datos as $key => $value) {
-                  $arr[$value->id]=['id'=>$value->id,'nombre_completo'=>$value->nombre_completo,'supervisor'=>$value->supervisor,'area'=>$value->area,'puesto'=>$value->puesto,
+                  $arr[$value->id]=['id'=>$value->id, 'pc_tmk'=>$value->user_ext ,'nombre_completo'=>$value->nombre_completo,'supervisor'=>$value->supervisor,'area'=>$value->area,'puesto'=>$value->puesto,
                                     'camp'=>$value->campaign,'turno'=>$value->turno,'Usuario externo'=>$value->user_ext, 'Fecha_ingreso'=>$value->fecha_capacitacion,'Estatus'=>$value->estatus
                                 ];
                   foreach ($fechaValue as $key2 => $value2) {
@@ -3524,7 +3530,127 @@ class RootController extends Controller {
             }
         }
         /* --------------------- Fin Banamex ---------------------- */
-        return view('root.reporteGO.RGO_Supervisor', compact('menu', 'valf', 'valf2', 'valf4', 'valf5', 'fechaValue', 'fecha_i', 'fecha_f'));
+        
+        /* ----------------- Inbursa Solucioness-------------------------- */
+        $date = $request->fecha_i;
+        $end_date = $request->fecha_f;
+        $fecha_i = $request->fecha_i;
+        $fecha_f = $request->fecha_f;
+        $fechaValue = [];
+        $contTime = 0;
+
+        while (strtotime($date) <= strtotime($end_date)) {
+            $fechaValue[$contTime] = $date;
+            $date = date("Y-m-d", strtotime("+1 day", strtotime($date)));
+            $contTime++;
+        }
+
+        $datos = DB::table('inbursa_soluciones.ventas_soluciones as a')
+                ->select(DB::raw("date(b.created_at) as fecha,b.supervisor,b.turno,d.nombre_completo as nameSup,
+                                                c.nombre_completo,c.id,b.user_ext,count(*) as total,
+                                                sum(if(b.turno='Matutino',1,0)) as venMat,
+                                                sum(if(b.turno='Vespertino',1,0)) as venVes,
+                                                Count(Distinct if(b.turno='Matutino',c.id,null)) as numM,
+                                                Count(Distinct if(b.turno='Vespertino',c.id,null)) as numV"))
+                ->leftjoin('asistencias as b', 'a.usuario', '=', 'b.empleado')
+                ->leftjoin('empleados as c', 'b.empleado', '=', 'c.id')
+                ->leftjoin('candidatos as d', 'b.supervisor', '=', 'd.id')
+                ->where(['a.estatus_people_2' => 'Venta', 'b.area' => 'Operaciones', 'b.puesto' => 'Operador de Call Center',
+                    'b.campaign' => 'Inbursa Soluciones', ['a.fecha_capt', '=', DB::raw("date(b.created_at)")]])
+                ->whereBetween(DB::raw("DATE(b.created_at)"), [$request->fecha_i, $request->fecha_f])
+                ->whereBetween('a.fecha_capt', [$request->fecha_i, $request->fecha_f])
+                ->groupBy(DB::raw("date(b.created_at)"), 'b.supervisor')
+                ->get();
+
+        $agentesLog = DB::table("asistencias as a")
+                ->select(DB::raw("date(a.created_at) as fecha,a.supervisor,a.turno,c.nombre_completo as nameSup,
+                              b.nombre_completo,b.id,a.user_ext,count(*) as total,
+                              Count(Distinct if(a.turno='Matutino',b.id,null)) as numM,
+                              Count(Distinct if(a.turno='Vespertino',b.id,null)) as numV"))
+                ->leftjoin('empleados as b', 'a.empleado', '=', 'b.id')
+                ->leftjoin('candidatos as c', 'b.supervisor', '=', 'c.id')
+                ->where(['a.area' => 'Operaciones', 'a.puesto' => 'Operador de Call Center', 'a.campaign' => 'Inbursa Soluciones'])
+                ->whereBetween(DB::raw("DATE(a.created_at)"), [$request->fecha_i, $request->fecha_f])
+                ->groupBy(DB::raw("date(a.created_at)"), 'a.supervisor')
+                ->get();
+
+        $calidad = DB::table('calidad_ventas as a')
+                ->select(DB::raw("DATE(b.created_at) AS fecha, b.supervisor,b.turno,d.nombre_completo as nameSup, AVG(if(b.turno='Matutino',a.resultado,null)) as calm,AVG(if(b.turno='Vespertino',a.resultado,null)) as calv"))
+                ->leftjoin('asistencias as b', 'a.nombre', '=', 'b.empleado')
+                ->leftjoin('empleados as c', 'b.empleado', '=', 'c.id')
+                ->leftjoin('candidatos as d', 'b.supervisor', '=', 'd.id')
+                ->where(['b.area' => 'Operaciones', 'b.puesto' => 'Operador de Call Center', 'b.campaign' => 'Inbursa Soluciones', 'a.campaign' => 'Inbursa Soluciones'])
+                ->whereBetween(DB::raw("DATE(b.created_at)"), [$request->fecha_i, $request->fecha_f])
+                ->whereBetween('a.fecha_monitoreo', [$request->fecha_i, $request->fecha_f])
+                ->groupBy(DB::raw("date(b.created_at)"), 'b.supervisor')
+                ->get();
+        $arIS = [];
+        foreach ($datos as $key => $value) {
+            $arIS[$value->fecha][$value->supervisor] = [
+                'nameSup' => $value->nameSup,
+                'ventasM' => $value->venMat,
+                'ventasV' => $value->venVes
+            ];
+        }
+        $ar2IS = [];
+        foreach ($calidad as $key => $value) {
+            $ar2IS[$value->fecha][$value->supervisor] = ['nameSup' => $value->nameSup, 'calidadM' => $value->calm, 'calidadV' => $value->calv];
+        }
+        $ar3IS = [];
+        foreach ($agentesLog as $key => $value) {
+            $ar3IS[$value->fecha][$value->supervisor] = ['nameSup' => $value->nameSup, 'numM' => $value->numM, 'numV' => $value->numV];
+        }
+        foreach ($arIS as $key => $value) {
+            $vphMat = 0;
+            $vphVes = 0;
+            foreach ($value as $key2 => $value2) {
+                if ($key == date('Y-m-d')) {
+                    if (array_key_exists($key2, $ar3IS[$key])) {
+                        if ($ar3IS[$key][$key2]['numM'] == 0) {
+                            $vphMat = 0;
+                        } else {
+                            $vphMat = $value2['ventasM'] / (($ar3IS[$key][$key2]['numM']) * (GetHorasVphCalidadM()));
+                        }
+                        if ($ar3IS[$key][$key2]['numV'] == 0) {
+                            $vphVes = 0;
+                        } else {
+                            $vphVes = $value2['ventasV'] / (($ar3IS[$key][$key2]['numV']) * (GetHorasVphCalidadV()));
+                        }
+                    }
+                } else {
+                    if (array_key_exists($key2, $ar3IS[$key])) {
+                        if ($ar3IS[$key][$key2]['numM'] == 0) {
+                            $vphMat = 0;
+                        } else {
+                            $vphMat = $value2['ventasM'] / (($ar3IS[$key][$key2]['numM']) * (6));
+                        }
+                        if ($ar3IS[$key][$key2]['numV'] == 0) {
+                            $vphVes = 0;
+                        } else {
+                            $vphVes = $value2['ventasV'] / (($ar3IS[$key][$key2]['numV']) * (6));
+                        }
+                    }
+                }
+                $arIS[$key][$key2] += array('numM' => $ar3IS[$key][$key2]['numM'], 'numV' => $ar3IS[$key][$key2]['numV'], 'vphM' => $vphMat, 'vphV' => $vphVes);
+            }
+        }
+        $valf9 = [];
+        foreach ($arIS as $key => $value) {
+            foreach ($value as $key2 => $value2) {
+                $valf9[$key][$key2] = ['nameSup' => $value[$key2]['nameSup'],
+                    'numM' => $value[$key2]['numM'],
+                    'numV' => $value[$key2]['numV'],
+                    'ventasM' => $value[$key2]['ventasM'],
+                    'ventasV' => $value[$key2]['ventasV'],
+                    'VPHM' => round($value[$key2]['vphM'], 2),
+                    'VPHV' => round($value[$key2]['vphV'], 2),
+                    'calidadM' => array_key_exists($key, $ar2) ? array_key_exists($key2, $ar2[$key]) ? round($ar2[$key][$key2]['calidadM'], 2) : 0 : 0,
+                    'calidadV' => array_key_exists($key, $ar2) ? array_key_exists($key2, $ar2[$key]) ? round($ar2[$key][$key2]['calidadV'], 2) : 0 : 0];
+            }
+        }
+        /* ----------------- Fin Inbursa Soluciones-------------------------- */
+               
+        return view('root.reporteGO.RGO_Supervisor', compact('menu', 'valf', 'valf2', 'valf4', 'valf5', 'valf9', 'fechaValue', 'fecha_i', 'fecha_f'));
     }
 
     public function GetSuperN($date = '', $end_date = '', $camp) {
@@ -3710,6 +3836,8 @@ class RootController extends Controller {
                     ->groupBy('b.empleado')
                     ->get();
 
+
+
             $calidad = DB::table('calidad_ventas as a')
                     ->select('b.empleado', DB::raw("avg(a.resultado) as cal"))
                     ->leftjoin('asistencias as b', 'a.nombre', '=', 'b.empleado')
@@ -3728,17 +3856,23 @@ class RootController extends Controller {
                 ];
             }
             $ar2 = [];
+
+            
+
             foreach ($agentes as $key => $value) {
                 $ar2[$value->empleado] = [
                     'ventas' => $value->ventas
                 ];
             }
+
             $ar3 = [];
             foreach ($calidad as $key => $value) {
                 $ar3[$value->empleado] = [
                     'cal' => $value->cal
                 ];
             }
+            
+
             foreach ($ar as $key => $value) {
                 if (array_key_exists($key, $ar2)) {
                     if ($date == date('Y-m-d')) {
@@ -3755,6 +3889,7 @@ class RootController extends Controller {
                     $ar[$key] += ['calidad' => 0];
                 }
             }
+            dd($ar);
         } elseif ($camp == 'Inbursa') {
             $agentesLog = DB::table('asistencias as a')
                     ->select('a.empleado', 'b.nombre_completo', 'a.turno')
@@ -3953,7 +4088,74 @@ class RootController extends Controller {
                     $ar[$key] += ['calidad' => 0];
                 }
             }
+        }elseif ($camp == 'InbursaSoluciones') {
+            $agentesLog = DB::table('asistencias as a')
+                    ->select('a.empleado', 'b.nombre_completo', 'a.turno')
+                    ->leftjoin('empleados as b', 'a.empleado', '=', 'b.id')
+                    ->where(['a.supervisor' => $supervisor, 'a.area' => 'Operaciones',
+                        'a.puesto' => 'Operador de Call Center', 'a.campaign' => 'Inbursa Soluciones'])
+                    ->whereDate('a.created_at', '=', $date)
+                    ->get();
+
+            $agentes = DB::table('inbursa_soluciones.ventas_soluciones as a')
+                    ->select(DB::raw("b.empleado,count(*) as ventas "))
+                    ->leftjoin('asistencias as b', 'a.usuario', '=', 'b.empleado')
+                    ->leftjoin('empleados as c', 'b.empleado', '=', 'c.id')
+                    ->where(['b.supervisor' => $supervisor, 'a.estatus_people_2' => 'Venta',
+                        'b.area' => 'Operaciones', 'b.puesto' => 'Operador de Call Center',
+                        'b.campaign' => 'Inbursa Soluciones', ['a.fecha_capt', '=', DB::raw("date(b.created_at)")]])
+                    ->whereDate('b.created_at', '=', $date)
+                    ->whereDate('a.fecha_capt', '=', $date)
+                    ->groupBy('b.empleado')
+                    ->get();
+            $calidad = DB::table('calidad_ventas as a')
+                    ->select('b.empleado', DB::raw("avg(a.resultado) as cal"))
+                    ->leftjoin('asistencias as b', 'a.nombre', '=', 'b.empleado')
+                    ->leftjoin('empleados as c', 'b.empleado', '=', 'c.id')
+                    ->where(['b.supervisor' => $supervisor,
+                        'b.area' => 'Operaciones', 'b.puesto' => 'Operador de Call Center',
+                        'b.campaign' => 'Inbursa Soluciones', 'a.fecha_venta' => $date])
+                    ->whereDate('b.created_at', '=', $date)
+                    ->groupBy('b.empleado')
+                    ->get();
+            $ar = [];
+            foreach ($agentesLog as $key => $value) {
+                $ar[$value->empleado] = [
+                    'name' => $value->nombre_completo,
+                    'turno' => $value->turno
+                ];
+            }
+            $ar2 = [];
+            foreach ($agentes as $key => $value) {
+                $ar2[$value->empleado] = [
+                    'ventas' => $value->ventas
+                ];
+            }
+            $ar3 = [];
+            foreach ($calidad as $key => $value) {
+                $ar3[$value->empleado] = [
+                    'cal' => $value->cal
+                ];
+            }
+            foreach ($ar as $key => $value) {
+                if (array_key_exists($key, $ar2)) {
+                    if ($date == date('Y-m-d')) {
+                        $ar[$key] += ['ventas' => $ar2[$key]['ventas'], 'vph' => round($ar2[$key]['ventas'] / (GetHorasVphCalidad($value['turno'])), 2)];
+                    } else {
+                        $ar[$key] += ['ventas' => $ar2[$key]['ventas'], 'vph' => round($ar2[$key]['ventas'] / 6, 2)];
+                    }
+                } else {
+                    $ar[$key] += ['ventas' => 0, 'vph' => 0];
+                }
+                if (array_key_exists($key, $ar3)) {
+                    $ar[$key] += ['calidad' => round($ar3[$key]['cal'], 2)];
+                } else {
+                    $ar[$key] += ['calidad' => 0];
+                }
+            }
         }
+                
+        
         return view('root.reporteGO.RGO_Agente', compact('menu', 'ar'));
     }
 

@@ -1,4 +1,9 @@
 <?php $__env->startSection('content'); ?>
+
+
+
+
+
 <div class="container-fluid">
   <div class="row">
     <div class="panel panel-default col-md-8 col-md-offset-2">
@@ -13,7 +18,11 @@
 
           <fieldset>
             <legend>Operaciones</legend>
-            <div class="alert alert-dismissible alert-danger" hidden="" id="msg"></div>
+
+                  <button type="button" class="btn btn-info" onclick="datosTelefonica()" data-toggle="modal" data-target="#myModal">Obtener datos</button>
+				   
+
+            
             <div class="form-group" id="phonediv">
               <label for="" class="col-lg-2 control-label">Teléfono</label>
               <div class="col-lg-7">
@@ -65,11 +74,46 @@
 
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <style media="screen">
   .close{
     margin-right: 5%;
   }
 </style>
+
+<script type="text/javascript">
+  
+  function datosTelefonica() {
+    var url="<?php echo e(URL('/prepago/datos')); ?>";
+    $.get( url, function( data ) {
+      $("#telefono-asterisk").val(data.data2);
+	  console.log(data.data2);
+	  alert(data.data2);
+    });
+  }
+
+
+</script>
+
 
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content2'); ?>
@@ -217,9 +261,10 @@ $("#validatelrep").click(function(){
   // $("#telefono").css('border', '3px solid red');
   // alert('Telefono invalido');
 });
-
-
 </script>
+
+
+
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layout.tmpre.basic', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

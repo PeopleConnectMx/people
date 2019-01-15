@@ -26,10 +26,10 @@
                 <div class="form-group"  align='Center'>
                     {{ Form::label('DN','',array('class'=>"col-sm-1 control-label")) }}
                     <div class="col-sm-2">
-                        {{ Form::text('dn','',array('id'=>'dn','class'=>"form-control", 'placeholder'=>"5512345678",'required'=>'required', 'readonly'=>'readonly')) }}
+                        {{ Form::text('dn','',array('id'=>'dn','class'=>"form-control", 'placeholder'=>"5512345678",'required'=>'required')) }}
                     </div>
                     <div class="col-sm-1" >
-                        {{ Form::button('Buscar',['class'=>"btn btn-primary", "onClick"=>"BuscarDos()"]) }}
+                        {{ Form::button('Buscar',['class'=>"btn btn-primary", "onClick"=>"buscar()"]) }}
                     </div>
                     {{ Form::label('Tipificacion','',array('class'=>"col-sm-1 control-label")) }}
                     <div class="col-sm-2" >
@@ -1010,6 +1010,7 @@
   })
 
 }
+
   function buscar(){
     $.ajax({
                   url:   "banamex/busca/"+$("#dn").val(),
@@ -1049,6 +1050,8 @@
                   }
           });
   }
+
+  
   function c_objetivoFun(){
     if($("#c_objetivo").val()=='Si'){
       $("#cos").show();

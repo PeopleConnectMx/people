@@ -52,15 +52,15 @@
                             <td>{{ $fecha_capt }}</td>
                             <td>{{$hora}}:{{$minuto}}:{{$segundo}}</td>
                             <td>
-                                <source src="http://13.85.24.249/Grabaciones_Inbursa/Inbursa/{{$anio}}/{{$mes}}/{{$dia}}/{{$value}}" type="audio/wav"/>
+                                <source src="http://13.85.24.249/Grabaciones_Vidatel/Vidatel/{{$anio}}/{{$mes}}/{{$dia}}/{{$value}}" type="audio/wav"/>
                                 <div>
-                                    <a type="button" class="btn btn-default" target="_blank" href="http://13.85.24.249/Grabaciones_Inbursa/Inbursa/{{$anio}}/{{$mes}}/{{$dia}}/{{$value}}" ;>
+                                    <a type="button" class="btn btn-default" target="_blank" href="http://13.85.24.249/Grabaciones_Vidatel/Vidatel/{{$anio}}/{{$mes}}/{{$dia}}/{{$value}}" ;>
                                         <span class="glyphicon glyphicon-play"></span>
                                     </a>
                                 </div>
                             </td>
                             <td>
-                               <a href="http://13.85.24.249/Grabaciones_Inbursa/Inbursa/{{$anio}}/{{$mes}}/{{$dia}}/{{$value}}" type="button" class="btn btn-default" download="audio.wav">
+                               <a href="http://13.85.24.249/Grabaciones_Vidatel/Vidatel/{{$anio}}/{{$mes}}/{{$dia}}/{{$value}}" type="button" class="btn btn-default" download="audio.wav">
                                    <span class="glyphicon glyphicon-download-alt"></span>
                                </a>
                             </td>

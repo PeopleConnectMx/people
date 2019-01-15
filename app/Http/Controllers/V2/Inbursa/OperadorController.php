@@ -7,7 +7,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Model\Cps;
 use App\Model\InbursaVidatel\InbursaVidatel;
-use App\Model\InbursaSoluciones\InbursaSoluciones;
+use App\Model\InbursaSoluciones\Inbursa_Soluciones;
 
 class OperadorController extends Controller
 {
@@ -100,7 +100,7 @@ class OperadorController extends Controller
   }
 
   public function BuscarVentaSoluciones($dn=''){
-    $is_venta=InbursaSoluciones::where([
+    $is_venta=Inbursa_Soluciones::where([
       'telefono'=>$dn,
       ['estatus_people_2','like','Venta%']
     ])

@@ -121,6 +121,7 @@ return [
         'mysql_rules2' => [
             'driver' => 'mysql',
             'host' => '13.85.24.249',
+			#'host' => '52.175.249.95',
             'port' => env('DB_PORT', '3306'),
             'database' => 'bases',
             'username' => 'root',
@@ -311,6 +312,7 @@ return [
         ],
         'mysqlSistemas' => [
             'driver' => 'mysql',
+            #'host' => env('DB_Sistemas_HOST', 'localhost'),
             'host' => env('DB_Sistemas_HOST', 'localhost'),
             'port' => env('DB_Sistemas_PORT', '3306'),
             'database' => env('DB_Sistemas_DATABASE', 'forge'),
@@ -429,6 +431,24 @@ return [
                 PDO::MYSQL_ATTR_LOCAL_INFILE => 1
             ]
         ],
+		
+		'mysqlInbSoluciones' => [
+            'driver' => 'mysql',
+            'host' => 'peco.mysql.database.azure.com',
+            'port' => env('DB_Inbursa_Soluciones_PORT', '3306'),
+            'database' => 'inbursa_soluciones',
+            'username' => 'adan@peco',
+            'password' => 'S1st3m4sr3l04D',
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+            'options'   => [
+                \PDO::ATTR_EMULATE_PREPARES => true,
+                PDO::MYSQL_ATTR_LOCAL_INFILE => 1
+            ]
+        ],
 
         'pgsql' => [
             'driver' => 'pgsql',
@@ -440,6 +460,24 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'schema' => 'public',
+        ],
+		
+		'tmdatos' => [
+            'driver' => 'mysql',
+            'host' => '52.183.36.191',
+            'port' => '3306',
+            'database' => 'reportes_marcacion',
+            'username' => 'root',
+            'password' => 'S1st3m4sr3l04D',
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+            'options'   => [
+                \PDO::ATTR_EMULATE_PREPARES => true,
+                PDO::MYSQL_ATTR_LOCAL_INFILE => true
+            ]
         ],
 
     ],

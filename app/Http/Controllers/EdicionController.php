@@ -331,7 +331,7 @@ public function ArchivoAuditoria(Request $request){
                                         break;
                         }
               /*case 'Coordinador': $menu="layout.coordinador.layoutCoordinador"; break;*/
-        default: $menu="layout.rep.basic"; break;
+        default: $menu="layout.error.error"; break;
         }
         $noEmpleado=session('user');
         #'layout.capacitador.admin'
@@ -345,7 +345,7 @@ public function ArchivoAuditoria(Request $request){
 
             #if(){}
 
-        	return view('edicion.reporteEdicion.reportEdicion', compact('menu'));
+        return view('edicion.reporteEdicion.reportEdicion', compact('menu'));
         #return view('edicion.reporteEdicion.reportEditor');
     }
 
@@ -450,22 +450,30 @@ public function ArchivoAuditoria(Request $request){
         switch ($request->campaign) {
             case 'Mapfre':
                 $valores = MapfreNumerosMarcados::select(DB::raw('c.nombre_completo as nombre_completo,quienSubio, fechaSubido,SUM(subido) as audios_editados'),DB::raw("round((SUM(subido)*100)/('$cont'*60),2) as cumplimiento"))
-                ->join('pc.candidatos as c', 'quienSubio', '=', 'c.id')
-                ->whereBetween('fechaSubido',[$request->fecha_i,$request->fecha_f])
-                ->groupBy('nombre_completo')
-                ->get();
+                    ->join('pc.candidatos as c', 'quienSubio', '=', 'c.id')
+                    ->whereBetween('fechaSubido',[$request->fecha_i,$request->fecha_f])
+                    ->groupBy('nombre_completo')
+                    ->get();
             break;
 
             case 'Inbursa':
                 $valores=DB::table('candidatos as c')
-                ->select('c.nombre_completo as nombre_completo','v.quienSubio as quienSubio', 'v.fechaSubido as fechaSubido',
-                DB::raw('SUM(v.subido) as audios_editados'), DB::raw("round((SUM(v.subido)*100)/('$cont'*60),2) as cumplimiento"))
-                ->join('inbursa_vidatel.ventas_inbursa_vidatel as v', 'quienSubio', '=', 'c.id')
-                ->whereBetween('fechaSubido',[$request->fecha_i,$request->fecha_f])
-                ->groupBy('nombre_completo')
-                ->get();
+                    ->select('c.nombre_completo as nombre_completo','v.quienSubio as quienSubio', 'v.fechaSubido as fechaSubido',
+                    DB::raw('SUM(v.subido) as audios_editados'), DB::raw("round((SUM(v.subido)*100)/('$cont'*60),2) as cumplimiento"))
+                    ->join('inbursa_vidatel.ventas_inbursa_vidatel as v', 'quienSubio', '=', 'c.id')
+                    ->whereBetween('fechaSubido',[$request->fecha_i,$request->fecha_f])
+                    ->groupBy('nombre_completo')
+                    ->get();
+                
+            case 'Soluciones':
+                $valores=DB::table('candidatos as c')
+                    ->select('c.nombre_completo as nombre_completo','v.quienSubio as quienSubio', 'v.fechaSubido as fechaSubido',
+                    DB::raw('SUM(v.subido) as audios_editados'), DB::raw("round((SUM(v.subido)*100)/('$cont'*60),2) as cumplimiento"))
+                    ->join('inbursa_soluciones.ventas_soluciones as v', 'quienSubio', '=', 'c.id')
+                    ->whereBetween('fechaSubido',[$request->fecha_i,$request->fecha_f])
+                    ->groupBy('nombre_completo')
+                    ->get();                
         }
-
 		return view('edicion.reporteEdicion.reportEditor', compact('valores','menu'));
 
     }
@@ -552,6 +560,18 @@ public function ArchivoAuditoria(Request $request){
 
             case 'Inbursa':
                 $ventas = DB::table('inbursa_vidatel.ventas_inbursa_vidatel')
+                ->select(DB::raw("fecha_capt, sum(if(estatus_people_2='Venta',1,0)) as Ventas, sum(if(estatusSubido ='Aceptada' and estatus_people_2='Venta',1,0)) as edi_acep,
+                    sum(if(estatusSubido ='Rechazada' and estatus_people_2='Venta',1,0)) as edi_recha,
+                    sum(if(estatusSubido ='NoEncontrado' and estatus_people_2='Venta',1,0)) as no_entada,
+                    sum(if(subido =1 and estatus_people_2='Venta', 1,0)) as total_edi,
+                    '0' as No_subido, round((sum(if(subido =1 and estatus_people_2='Venta' ,1,0)) / sum(if(estatus_people_2='Venta',1,0)))*100,2) as Avence"))
+                ->whereBetween('fecha_capt',[$request->fecha_i,$request->fecha_f])
+                ->groupBy('fecha_capt')
+                ->get();
+            break;
+			
+			case 'Soluciones':
+                $ventas = DB::table('inbursa_soluciones.ventas_soluciones')
                 ->select(DB::raw("fecha_capt, sum(if(estatus_people_2='Venta',1,0)) as Ventas, sum(if(estatusSubido ='Aceptada' and estatus_people_2='Venta',1,0)) as edi_acep,
                     sum(if(estatusSubido ='Rechazada' and estatus_people_2='Venta',1,0)) as edi_recha,
                     sum(if(estatusSubido ='NoEncontrado' and estatus_people_2='Venta',1,0)) as no_entada,

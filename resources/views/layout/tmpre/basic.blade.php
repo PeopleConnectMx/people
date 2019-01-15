@@ -27,7 +27,7 @@
 
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav navbar-right">
-                      <li><a class="glyphicon glyphicon-warning-sign" href="{{ url('/NuevoTicket') }}"></a></li>
+                      <!--  <li><a class="glyphicon glyphicon-warning-sign" href="{{ url('/NuevoTicket') }}"></a></li> -->
                       <li><a class="glyphicon glyphicon-search" href="{{ url('/tm/pre/estadoAgente') }}"></a></li>
 
                         <!-- <li class="dropdown">

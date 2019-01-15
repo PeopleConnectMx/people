@@ -47,29 +47,31 @@ class NominaController extends Controller
   }
   public function Index($tipoV='')
   {
-    $fechaInicio='2017-02-25';#10-24 25-09
-    $fechaFin='2017-03-09';
-    $excluir=['1608240004','1611130008','1611130007','1611240010','1609130010','1611290050'];
+    $fechaInicio='2018-10-10';#10-24 25-09
+    $fechaFin='2018-10-24';
+    $excluir=['1608240004','1611130008','1609130010'];
 
-    $nuevafecha = strtotime ( '-7 day' , strtotime ( $fechaFin ) ) ;
+    $nuevafecha = strtotime ( '-6 day' , strtotime ( $fechaFin ) ) ;
     $nuevafecha = date ( 'Y-m-d' , $nuevafecha );
     $supervisor=$this->GetSupervisor();
 
     $plan=Candidato::select('candidatos.id','candidatos.nombre_completo', 'candidatos.fecha_capacitacion', 'candidatos.puesto',
-    'candidatos.paterno','candidatos.materno','candidatos.nombre','candidatos.campaign','candidatos.puesto', 'empleados.grupo',
-    'candidatos.turno', 'empleados.grupo',
-    'candidatos.turno as t', 'empleados.user_ext','candidatos.area')
-    ->join('usuarios', 'candidatos.id','=','usuarios.id')
-    ->join('empleados','empleados.id','=','candidatos.id')
-    ->where([
-      'usuarios.active'=>'1',
-      ['candidatos.nombre','<>','Vacante'],
-      ['fecha_capacitacion','<=',$nuevafecha],
-      'candidatos.puesto'=>'Operador de Call Center'
-      ])
-      ->whereNotIn('candidatos.id',$excluir)
-      ->whereNotIn('candidatos.campaign',['Conaliteg','Auri'])
-      ->get();
+        'candidatos.paterno','candidatos.materno','candidatos.nombre','candidatos.campaign','candidatos.puesto', 'empleados.grupo',
+        'candidatos.turno', 'empleados.grupo',
+        'candidatos.turno as t', 'empleados.user_ext','candidatos.area')
+        ->join('usuarios', 'candidatos.id','=','usuarios.id')
+        ->join('empleados','empleados.id','=','candidatos.id')
+        ->where([
+          'usuarios.active'=>'1',
+          ['candidatos.nombre','<>','Vacante'],
+          ['fecha_capacitacion','<=',$nuevafecha],
+          ['empleados.estatus', '=', 'Activo'],
+          #'candidatos.puesto'=>'Operador de Call Center'
+          ])
+          ->whereNotIn('candidatos.id',$excluir)
+          ->whereNotIn('candidatos.campaign',['Conaliteg','Auri'])
+          ->get();
+      
       $val=[];
       $dias=$this->GetDias($fechaFin);
       $diasAd=$this->GetDiasAd($fechaInicio);
@@ -179,6 +181,7 @@ class NominaController extends Controller
                     })->export('xls');
       }
       else {
+        
         return view('nomina.index',compact('val'));
       }
 
@@ -430,10 +433,10 @@ class NominaController extends Controller
         ];
       #}
         break;
-      case 'Programador':
+      case 'Programador 1':
       $data=[
         'sueldo'=>3000,
-        'complemento'=> 6000 ,
+        'complemento'=> 7640 ,
         'bonoAp'=> 0 ,
         'calidad'=> 0 ,
         'productividad'=> 0 ,
@@ -448,10 +451,10 @@ class NominaController extends Controller
         'productividad'=> 0 ,
       ];
         break;
-      case 'Jefe de Soporte':
+      case 'Jefe de soporte':
       $data=[
         'sueldo'=>3000,
-        'complemento'=> 10288 ,
+        'complemento'=> 13000 ,
         'bonoAp'=> 0 ,
         'calidad'=> 0 ,
         'productividad'=> 0 ,

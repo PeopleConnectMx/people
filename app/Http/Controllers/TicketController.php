@@ -99,18 +99,23 @@ class TicketController extends Controller {
         $identificador = false;
         if (tickets::find($value)) {
             $valores = tickets::select(DB::raw("tickets.id, tickets.asignado,
-if(tickets.asignado is not null, (select can.nombre_completo from sistemas.tickets inner join pc.candidatos as can on asignado = can.id where tickets.id ='$value'),'Sin Asignacion') as nom_asignado,
-tickets.encargado,
-if(tickets.encargado is not null, (select ca.nombre_completo from sistemas.tickets inner join pc.candidatos as ca on encargado = ca.id where tickets.id ='$value'),'Sin Encargado') as nom_encargado,
-concat(tiempo_dias,' días, ',tiempo_horas,' horas, ',tiempo_mins,' minutos ') as tiempo_estimado,tickets.BoVoSistemas,
-tickets.BoVoSolicitante,titulo,descripcion,quien_solicita,estatus,divicion,tickets.updated_at as hora_envio, c.nombre_completo,c.area, c.puesto,c.campaign"))
+                if(tickets.asignado is not null, (select can.nombre_completo from sistemas.tickets inner join pc.candidatos as can on asignado = can.id where tickets.id ='$value'),'Sin Asignacion') as nom_asignado,
+                tickets.encargado,
+                if(tickets.encargado is not null, (select ca.nombre_completo from sistemas.tickets inner join pc.candidatos as ca on encargado = ca.id where tickets.id ='$value'),'Sin Encargado') as nom_encargado,
+
+                tickets.BoVoSistemas,
+                tickets.BoVoSolicitante,titulo,descripcion,quien_solicita,estatus,divicion,tickets.updated_at as hora_envio, c.nombre_completo,c.area, c.puesto,c.campaign"))
                     ->join('pc.candidatos as c', 'quien_solicita', '=', 'c.id')
                     ->where('tickets.id', $value)
                     ->get();
+            
+            #concat(tiempo_dias,' días, ',tiempo_horas,' horas, ',tiempo_mins,' minutos ') as tiempo_estimado, -> linea va despues de nom_encargado, 7 lenas arriba baby
+
             $ticket_com = comentarios_tickets::select(DB::raw('id_comentario,comentario_tecnico,comentarios_solicitante'))
                     ->where('id_ticket', $value)
                     ->get();
 
+            
             $ticket_histo = comentarios_tickets::select(DB::raw('c.nombre_completo,time(comentarios_tickets.created_at) as hora,date(comentarios_tickets.created_at) as dia,comentario_tecnico,comentarios_solicitante,estatus'))
                     ->join('pc.candidatos as c', 'quien_contesta', '=', 'c.id')
                     ->where('id_ticket', $value)
@@ -167,11 +172,11 @@ tickets.BoVoSolicitante,titulo,descripcion,quien_solicita,estatus,divicion,ticke
         }
 
         switch (session('user')) {
-            case '1610040033':
+            case '1609260013':
                 $valores = tickets::select(DB::raw('tickets.id,titulo, divicion, estatus,descripcion, tickets.created_at as hora_envio,tickets.updated_at as hora_actua,c.nombre_completo as asignado,can.nombre_completo as encargado'))
                         ->LEFTjoin('pc.candidatos as c', 'asignado', '=', 'c.id')
                         ->LEFTjoin('pc.candidatos as can', 'encargado', '=', 'can.id')
-                        ->where(['can.id' => '1610040033'])
+                        ->where(['can.id' => '1609260013'])
                         ->orWhere('encargado', null)
                         ->orderBy('hora_envio', 'desc')
                         ->get();
@@ -185,16 +190,16 @@ tickets.BoVoSolicitante,titulo,descripcion,quien_solicita,estatus,divicion,ticke
                         ->orderBy('hora_envio', 'desc')
                         ->get();
                 break;
-            case '1705300010':
+            case '1702090039':
                 $valores = tickets::select(DB::raw('tickets.id,titulo, divicion, estatus,descripcion, tickets.created_at as hora_envio,tickets.updated_at as hora_actua,c.nombre_completo as asignado,can.nombre_completo as encargado'))
                         ->LEFTjoin('pc.candidatos as c', 'asignado', '=', 'c.id')
                         ->LEFTjoin('pc.candidatos as can', 'encargado', '=', 'can.id')
-                        ->where(['can.id' => '1705300010'])
+                        ->where(['can.id' => '1702090039'])
                         ->orWhere('encargado', null)
                         ->orderBy('hora_envio', 'desc')
                         ->get();
                 break;
-
+            /*
             case '1610040032':
                 $valores = tickets::select(DB::raw('tickets.id,titulo, divicion, estatus,descripcion, tickets.created_at as hora_envio,tickets.updated_at as hora_actua,c.nombre_completo as asignado,can.nombre_completo as encargado'))
                         ->LEFTjoin('pc.candidatos as c', 'asignado', '=', 'c.id')
@@ -204,6 +209,7 @@ tickets.BoVoSolicitante,titulo,descripcion,quien_solicita,estatus,divicion,ticke
                         ->orderBy('hora_envio', 'desc')
                         ->get();
                 break;
+                */
         }
         //dd($valores);
 
@@ -234,10 +240,13 @@ tickets.BoVoSolicitante,titulo,descripcion,quien_solicita,estatus,divicion,ticke
                     ->orderBy('nombre_completo', 'asc')
                     ->pluck('nombre_completo', 'id');
 
-            $encargado = Candidato::select('id', 'nombre_completo')
-                    ->whereIn('id', [1610040033, 1610040040,1705300010,1610040032])
+            $encargado = Candidato::select('candidatos.id', 'candidatos.nombre_completo')
+                    ->whereIn('id', [1609260013, 1610040040,1702090039])
+                    #->join('pc.empleados', 'candidatos.id', '=', 'empleados.id')
+                    #->where(['area' => 'Sistemas', 'estatus' => 'Activo'])
                     ->orderBy('nombre_completo', 'asc')
                     ->pluck('nombre_completo', 'id');
+
 
             $ticket_histo = comentarios_tickets::select(DB::raw('c.nombre_completo,time(comentarios_tickets.created_at) as hora,date(comentarios_tickets.created_at) as dia,comentario_tecnico,comentarios_solicitante,estatus'))
                     ->join('pc.candidatos as c', 'quien_contesta', '=', 'c.id')

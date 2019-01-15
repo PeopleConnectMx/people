@@ -58,8 +58,13 @@ class IncidenciasController extends Controller
                 $ext=explode(".", $name);
                 $ext=end($ext);
                 $lastName=$request->no_emp.'_'.date('Y-m-d').'.'.$ext;
+
                 $disk = Storage::disk('incidencias')->put($lastName, File::get($file));
+            }else{
+                $lastName = '0';
             }
+
+            
 
             $incidencia= new Incidencia;
             $incidencia->empleado=$request->no_emp;

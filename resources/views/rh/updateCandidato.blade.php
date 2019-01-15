@@ -88,7 +88,7 @@
                     {{ Form::label('Sucursal *','',array('class'=>"col-sm-2 control-label")) }}
                     <div class="col-sm-10">
                         {{ Form::select('sucursal', [
-                        'Zapata'=>'Zapata'],
+                        'Sevilla'=>'Sevilla'],
                         $user[0]->sucursal, ['required' => 'required', 'class'=>"form-control", 'placeholder'=>""]  ) }}
                     </div>
                 </div>
@@ -98,9 +98,9 @@
                     <div class="col-sm-10">
                         {{ Form::select('hora_entrevista', [
                         '09:30:00'=>'09:30 am',
-                        '10:30:00'=>'10:30 pm',
-                        '11:30:00'=>'11:30 pm',
-                        '12:30:00'=>'12:30 pm',
+                        '10:30:00'=>'10:30 qm',
+                        '11:30:00'=>'11:30 qm',
+                        '12:30:00'=>'12:30 qm',
                         '13:30:00'=>'01:30 pm',
                         '14:30:00'=>'02:30 pm',
                         '15:30:00'=>'03:30 pm',

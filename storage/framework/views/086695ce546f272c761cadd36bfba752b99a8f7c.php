@@ -83,54 +83,92 @@
 
                 <?php endif; ?>
 
+
+
+
+
+
                 <!-- Inbursa -->
                 <?php if(session('campaign')=='Inbursa' || session('area')=='Sistemas'): ?>
-                <li data-toggle="collapse" data-target="#InbursaOperaciones" class="collapsed active">
-                  <a>
-                    Inbursa <span class="glyphicon glyphicon-chevron-down"></span>
-                  </a>
-                </li>
-                <ul class="sub-menu collapse nav nav-pills nav-stacked" id="InbursaOperaciones">
-                  <?php if(session('puesto')=='Operador de call center' || session('puesto')=='Jefe de desarrollo'): ?>
-                  <li data-toggle="collapse" data-target="#OperadorInbursa" class="collapsed active">
+                  <li data-toggle="collapse" data-target="#InbursaOperaciones" class="collapsed active">
                     <a>
-                      Operador<span class="glyphicon glyphicon-triangle-bottom"></span>
+                      Inbursa <span class="glyphicon glyphicon-chevron-down"></span>
                     </a>
                   </li>
 
-                  <ul class="sub-menu collapse nav nav-pills nav-stacked" id="OperadorInbursa">
-                      <li class=""><a href="<?php echo e(url('/Inbursa/Operaciones/Agente/Inicio')); ?>" class="glyphicon glyphicon-menu-right"> Captura</a></li>
-                      <li class=""><a href="<?php echo e(url('/Inbursa/Calidad/Ventas/Inicio')); ?>" class="glyphicon glyphicon-menu-right"> Corroboración</a></li>
+
+                  <ul class="sub-menu collapse nav nav-pills nav-stacked" id="InbursaOperaciones">
+                    <?php if(session('puesto')=='Operador de call center' || session('puesto')=='Jefe de desarrollo'): ?>
+                    <li data-toggle="collapse" data-target="#OperadorInbursa" class="collapsed active">
+                      <a>
+                        Operador<span class="glyphicon glyphicon-triangle-bottom"></span>
+                      </a>
+                    </li>
+
+                    <ul class="sub-menu collapse nav nav-pills nav-stacked" id="OperadorInbursa">
+                        <li class=""><a href="<?php echo e(url('/Inbursa/Operaciones/Agente/Inicio')); ?>" class="glyphicon glyphicon-menu-right"> Captura</a></li>
+                        <li class=""><a href="<?php echo e(url('/Inbursa/Calidad/Ventas/Inicio')); ?>" class="glyphicon glyphicon-menu-right"> Corroboración</a></li>
+                    </ul>
+                    <?php endif; ?>
+                    <?php if(session('puesto')=='Validador' || session('puesto')=='Jefe de desarrollo'): ?>
+                    <li data-toggle="collapse" data-target="#ValidadorInbursa" class="collapsed active">
+                      <a>
+                        Validación <span class="glyphicon glyphicon-triangle-bottom"></span>
+                      </a>
+                    </li>
+
+                    <ul class="sub-menu collapse nav nav-pills nav-stacked" id="ValidadorInbursa">
+                        <li class=""><a href="<?php echo e(url('/Inbursa/Calidad/Audios/Inicio')); ?>" class="glyphicon glyphicon-menu-right"> Captura</a></li>
+                        <li class=""><a href="<?php echo e(url('/Inbursa/Calidad/Ventas/Inicio')); ?>" class="glyphicon glyphicon-menu-right"> Corroboración</a></li>
+                    </ul>
+                    <?php endif; ?>
+
+
+
+
+                    <?php if(session('area')=='Sistemas' || session('puesto')=='Supervisor'): ?>
+                    <li data-toggle="collapse" data-target="#ReportesInbursa" class="collapsed active">
+                      <a>
+                        Reportes <span class="glyphicon glyphicon-triangle-bottom"></span>
+                      </a>
+                    </li>
+
+                    <ul class="sub-menu collapse nav nav-pills nav-stacked" id="ReportesInbursa">
+                        <li class=""><a href="<?php echo e(url('/Inbursa/Reportes/Envio/Ventas/Inicio')); ?>" class="glyphicon glyphicon-menu-right"> Enviar ventas</a></li>
+                        <li class=""><a href="<?php echo e(url('/Inbursa/Reportes/Envio/Validaciones/Inicio')); ?>" class="glyphicon glyphicon-menu-right"> Enviar validaciones</a></li>
+                        <li class=""><a href="<?php echo e(url('/Inbursa/Reportes/Envio/Rechazos/Inicio')); ?>" class="glyphicon glyphicon-menu-right"> Subir rechazos</a></li>
+                    </ul>
+                    <?php endif; ?>
                   </ul>
-                  <?php endif; ?>
-                  <?php if(session('puesto')=='Validador' || session('puesto')=='Jefe de desarrollo'): ?>
-                  <li data-toggle="collapse" data-target="#ValidadorInbursa" class="collapsed active">
+
+
+
+
+
+
+
+                  <li data-toggle="collapse" data-target="#InbursaSolucionesOperaciones" class="collapsed active">
                     <a>
-                      Validación <span class="glyphicon glyphicon-triangle-bottom"></span>
+                      Inbursa Soluciones <span class="glyphicon glyphicon-chevron-down"></span>
                     </a>
                   </li>
 
-                  <ul class="sub-menu collapse nav nav-pills nav-stacked" id="ValidadorInbursa">
-                      <li class=""><a href="<?php echo e(url('/Inbursa/Calidad/Audios/Inicio')); ?>" class="glyphicon glyphicon-menu-right"> Captura</a></li>
-                      <li class=""><a href="<?php echo e(url('/Inbursa/Calidad/Ventas/Inicio')); ?>" class="glyphicon glyphicon-menu-right"> Corroboración</a></li>
+                  <ul class="sub-menu collapse nav nav-pills nav-stacked" id="InbursaSolucionesOperaciones">
+                    <?php if(session('area')=='Sistemas' || session('puesto')=='Supervisor'): ?>
+                    <li data-toggle="collapse" data-target="#ReportesInbursaSoluciones" class="collapsed active">
+                      <a>
+                        Reportes Soluciones <span class="glyphicon glyphicon-triangle-bottom"></span>
+                      </a>
+                    </li>
+
+                    <ul class="sub-menu collapse nav nav-pills nav-stacked" id="ReportesInbursaSoluciones">
+                        <li class=""><a href="<?php echo e(url('/InbursaSoluciones/Reportes/Envio/Ventas/Inicio')); ?>" class="glyphicon glyphicon-menu-right">Ventas Soluciones</a></li>
+                        <li class=""><a href="<?php echo e(url('/InbursaSoluciones/Reportes/Envio/Validaciones/Inicio')); ?>" class="glyphicon glyphicon-menu-right">Validaciones Soluciones </a></li>
+                        <!-- <li class=""><a href="<?php echo e(url('/hola3')); ?>" class="glyphicon glyphicon-menu-right">Rechazos Soluciones</a></li> -->
+                    </ul>
+                    <?php endif; ?>
                   </ul>
-                  <?php endif; ?>
 
-                  <?php if(session('area')=='Sistemas' || session('puesto')=='Supervisor'): ?>
-                  <li data-toggle="collapse" data-target="#ReportesInbursa" class="collapsed active">
-                    <a>
-                      Reportes <span class="glyphicon glyphicon-triangle-bottom"></span>
-                    </a>
-                  </li>
-
-                  <ul class="sub-menu collapse nav nav-pills nav-stacked" id="ReportesInbursa">
-                      <li class=""><a href="<?php echo e(url('/Inbursa/Reportes/Envio/Ventas/Inicio')); ?>" class="glyphicon glyphicon-menu-right"> Enviar ventas</a></li>
-                      <li class=""><a href="<?php echo e(url('/Inbursa/Reportes/Envio/Validaciones/Inicio')); ?>" class="glyphicon glyphicon-menu-right"> Enviar validaciones</a></li>
-                      <li class=""><a href="<?php echo e(url('/Inbursa/Reportes/Envio/Rechazos/Inicio')); ?>" class="glyphicon glyphicon-menu-right"> Subir rechazos</a></li>
-                  </ul>
-                  <?php endif; ?>
-
-                </ul>
                 <?php endif; ?>
                 <li>
                   <a href="<?php echo e(url('/salir')); ?>">

@@ -1,4 +1,4 @@
-@0extends($menu)
+@extends($menu)
 @section('content')
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
@@ -139,7 +139,7 @@
                     {{ Form::label('Sucursal *','',array('class'=>"col-sm-2 control-label")) }}
                     <div class="col-sm-10">
                         {{ Form::select('sucursal', [
-                        'Zapata'=>'Zapata'],
+                        'Sevilla'=>'Sevilla'],
                         $datosCandidato[0]->sucursal, ['required' => 'required','class'=>"form-control", 'placeholder'=>""]  ) }}
                     </div>
                 </div>
@@ -171,14 +171,9 @@
                 </div>
 
 
+            
+        
 
-                <div class="form-group">
-                    {{ Form::label('Coach','',array('id'=>'coachsele','class'=>"col-sm-2 control-label")) }}
-                    <div class="col-sm-10">
-                        {{ Form::select('coach', $coach,
-                    $user[0]->coach, [ 'class'=>"form-control", "onchange"=>"selecionaCoach()", 'placeholder'=>"",'id'=>'coa']  ) }}
-                    </div>
-                </div>
 
                 <div class="form-group">
                     {{ Form::label('Supervisor','',array('class'=>"col-sm-2 control-label")) }}
@@ -253,10 +248,10 @@
                         {{ Form::select('bajaSup', [
                         'No Pasa Capacitación' => 'No Pasa Capacitación',
                         'Faltas' => 'Faltas',
-                        'Escolar' => 'Escolar',
-                        'Personal' => 'Personal',
                         'Baja Productividad' => 'Baja Productividad',
                         'Renuncia Voluntaria' => 'Renuncia Voluntaria',
+                        'Escolar' => 'Escolar',
+                        'Personal' => 'Personal',
                         'Faltas Por Incapacidad' => 'Faltas Por Incapacidad',
                         'Mejor Oferta Laboral' => 'Mejor Oferta Laboral',
                         'Fin de Campaña' => 'Fin de Campaña'],
@@ -422,6 +417,7 @@
         $("#medioReclutamiento").prop('disabled', true);
     }
 
+/*
     function selecionaCoach() {
         console.log($('#coa').val());
         if ($('#coa').val() != 0) {
@@ -430,7 +426,7 @@
             $("#sup").prop('disabled', false);
         }
     }
-
+*/
     function selecionaSup() {
         console.log($('#sup').val());
         if ($('#sup').val() != 0) {

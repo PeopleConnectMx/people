@@ -67,7 +67,7 @@
               </div>
               <div class="form-group input-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-earphone"></i></span>
-                {{ Form::text('extencion','',['class'=>'form-control','placeholder'=>'Extensión', 'required'=>'required','pattern'=>"[0-9]{4}", 'minlength'=>'4', 'title'=>"4 números" ]) }}
+                {{ Form::text('extencion','',['class'=>'form-control','placeholder'=>'Extensión', 'required'=>'required','pattern'=>"[0-9]{3}{4}", 'minlength'=>'3', 'maxlength'=>'4', 'title'=>"4 números" ]) }}
               </div>
               <div style="display:none;">
                 {{ Form::text('login','1',['class'=>'form-control','placeholder'=>'Usuario']) }}

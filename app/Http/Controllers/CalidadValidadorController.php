@@ -127,7 +127,7 @@ class CalidadValidadorController extends Controller
         $datosCalidad->aviso_priv=$request->aviso;
         $datosCalidad->escucha_activa=$request->escucha;
         $datosCalidad->captura=$request->captura;
-        $datosCalidad->manejo_objeciones=$request->objeciones
+        $datosCalidad->manejo_objeciones=$request->objeciones;
         $datosCalidad->error_critico=$request->error;
         $datosCalidad->resultado=$resultado;
         $datosCalidad->observaciones=$request->observaciones;

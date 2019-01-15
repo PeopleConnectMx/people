@@ -4,11 +4,13 @@
 $numMovi=count($valf)-1;
 $numMoviP=count($valf4)-1;
 $numInb=count($valf2)-1;
+$numInbSol=count($valf9)-1;
 $numBan=count($valf5)-1;
 $contBan=0;
 $contMovi=0;
 $contMoviP=0;
 $contInb=0;
+$contInbSol=0;
 ?>
 <div class="row">
 <!-- -###################### Fin TM Prepago  #####################-->
@@ -355,6 +357,97 @@ $contInb=0;
 </div>
 <!-- ######################## Fin Banamex ######################## -->
 
+
+
+<!-- -######################  Inbursa Soluciones #####################-->
+    <div class="col-md-8 col-md-offset-2">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+              <div >
+                <h3 class="panel-title">Reporte general de operación/ Inbursa Soluciones / Supervisor</h3>
+              </div>
+            </div>
+            @foreach($valf9 as $key=>$value)
+              @if(array_key_exists($key,$valf9))
+                <div class="panel-body" style="display:true" id='fechaInbSol{{$contInbSol}}'>
+                  <div align='center'>
+                    <table>
+                      <tr>
+                        {{ Form::button('',['class'=>"btn btn-primary glyphicon glyphicon-triangle-left", "onClick"=>"backInbSol()"]) }}
+                      </tr>
+                      <tr>
+                        {{$key}}
+                      </tr>
+                      <tr>
+                        {{ Form::button('',['class'=>"btn btn-primary glyphicon glyphicon-triangle-right", "onClick"=>"nextInbSol()"]) }}
+                      </tr>
+                    </table>
+                  </div>
+
+                <table class="table table-striped table-bordered table-hover" id="dataTables-exampleInbSol{{$contInbSol}}">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Supervisor</th>
+                      <th>Agentes activos Matutino</th>
+                      <th>Agentes activos Vespertino</th>
+                      <th>Ventas Matutino</th>
+                      <th>Ventas vespertino</th>
+                      <th>VPH Matutino</th>
+                      <th>VPH Vespertino</th>
+                      <th>Calidad Matutino</th>
+                      <th>Calidad Vespertino</th>
+                    </tr>
+
+                  </thead>
+                  <tbody>
+                    <?php $con=0; $mat=0; $ves=0; $ventmat=0;$ventves=0;?>
+                    @foreach ($valf9[$key] as $key2 => $value2)
+                    <tr>
+                      <?php $con=$con+1; ?>
+                       <td>{{$con}}</td>
+                       @if($value2['nameSup']==null)
+                         <td ><a href="{{ url('Administracion/operaciones/agente/'.$key2.'/'.$key.'/InbursaSoluciones') }}">Sin Supervisor</a></td>
+                       @else
+                         <td ><a href="{{ url('Administracion/operaciones/agente/'.$key2.'/'.$key.'/InbursaSoluciones') }}">{{ $value2['nameSup'] }}</a></td>
+                       @endif
+                        <td>{{$value2['numM']}}</td>   <!-- Toal de Plantilla Matunino-->
+                        <td>{{$value2['numV']}}</td>
+                        <td>{{$value2['ventasM']}}</td>   <!--Ventas Matutino-->
+                        <td>{{$value2['ventasV']}}</td>   <!--Ventas Vespertino-->
+                        <td>{{ $value2['VPHM'] }}</td>   <!--VPH Matutino-->
+                        <td>{{ $value2['VPHV'] }}</td>   <!--VPH Vespertino-->
+                        <td>{{ $value2['calidadM'] }}%</td>   <!--Calidad Matutino-->
+                        <td>{{ $value2['calidadV'] }}%</td>   <!--Calidad Vespertino-->
+                    </tr>
+                    <?php $mat=$mat+$value2['numM']; $ves=$ves+$value2['numV']; $ventmat=$ventmat+$value2['ventasM']; $ventves=$ventves+$value2['ventasV'];?>
+                    @endforeach
+
+                  </tbody>
+                  <tbody>
+                    <tr>
+                      <th colspan="2">Total</th>
+                      <td>{{$mat}}</td>
+                      <td>{{$ves}}</td>
+                      <td>{{$ventmat}}</td>
+                      <td>{{$ventves}}</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+               </table>
+             </div>
+              @endif
+              <?php $contInbSol++;?>
+             @endforeach
+        </div>
+    </div>
+<!-- -###################### Fin Inbursa  #####################-->
+
+
+
 </div>
 @stop
 @section('content2')
@@ -372,6 +465,7 @@ $contInb=0;
     var conMap=0;
     var conInb=0;
     var conBan=0;
+    var conInbSol=0;
     var limit=0;
     $(document).ready(function () {
 
@@ -380,11 +474,13 @@ $contInb=0;
           $valInb=0;
           $valMoviP=0;
           $valBan=0;
+          $valInbSol=0;
         ?>
         limitMovi={{$numMovi}};
         limitMoviP={{$numMoviP}};
         limitInb={{$numInb}};
         limitBan={{$numBan}};
+        limitInbSol={{$numInbSol}};
         // --------- movistar
           @foreach($valf as $key=>$value)
           $("#fecha{{$valMovi}}").hide();
@@ -432,6 +528,18 @@ $contInb=0;
           @endforeach
           $("#fechaInb0").show();
         // --------- Fin Inbursa
+        // --------- Inbursa Soluciones
+          @foreach($valf9 as $key=>$value)
+          $("#fechaInbSol{{$valInbSol}}").hide();
+          $('#dataTables-exampleInbSol{{$valInbSol}}').DataTable({
+              responsive: true,
+              "order": [[ 6, 'desc' ]]
+          });
+          <?php $valInbSol++; ?>
+          @endforeach
+          $("#fechaInbSol0").show();
+        // --------- Fin Inbursa Soluciones
+
         // console.log(limit);
     });
 
@@ -512,6 +620,27 @@ $contInb=0;
     }
     }
     //--------------------//
+    
+    //----------------------77
+    function nextInbSol(){
+      if(conInbSol<=limitInbSol){
+        $("#fechaInbSol"+conInbSol).hide();
+        if(conInbSol<limitInbSol){
+        conInbSol++;}
+        $("#fechaInbSol"+conInbSol).show();
+        console.log(conInbSol);
+      }
+    }
+    function backInbSol(){
+      if(conInbSol>=0){
+      $("#fechaInbSol"+conInbSol).hide();
+      if(conInbSol>0)
+      conInbSol--;
+      $("#fechaInbSol"+conInbSol).show();
+      console.log(conInbSol);
+        }
+    }
+    //--------------------//
     function nextMap(){
       if(con<=limit){
         $("#fechaMap"+con).hide();
@@ -529,7 +658,10 @@ $contInb=0;
       $("#fechaMap"+con).show();
       console.log(con);
     }
+    
     }
+    
+    
 </script>
 
 @stop

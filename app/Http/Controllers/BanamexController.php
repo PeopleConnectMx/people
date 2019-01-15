@@ -25,12 +25,13 @@ use App\Model\Banamex\ventas;
 use App\Model\Banamex\NuevosDatos;
 use App\Model\Banamex\PbxCel;
 
+
 class BanamexController extends Controller {
 
     public function Inicio() {
         $menu = $this->Menu();
-        // return view('Banamex.agente.inicio',compact('menu'));
-        return view('Banamex.agente.inicio2', compact('menu'));
+        return view('Banamex.agente.inicio',compact('menu'));
+        #return view('Banamex.agente.inicio2', compact('menu'));
     }
 
     public function Guarda(Request $request) {
@@ -53,14 +54,19 @@ class BanamexController extends Controller {
 
                     ->where('estatus', null)
                     ->get();
-            $audio = $this->Audio($request->numselect);
+            #$audio = $this->Audio($request->numselect);
+            $audio = $this->Audio("8713478051");
+            
             if (empty($datos)) {
                 $base_id = null;
             } else {
                 $base_id = $datos[0]->b_id;
             }
         }
+
         $fol = $this->folio();
+
+
         if ($request->tipificacion == 'Venta - Validada') {
             session::put('backoffice', $request->empleadoVal);
             $tip = new Tipificacion;
@@ -93,6 +99,7 @@ class BanamexController extends Controller {
             $tip->num_audio = $request->dn;
             $tip->save();
         }
+
         if ($request->tipificacion == 'Venta - Validada') {
             $vent = new Ventas;
             $vent->email = $request->email_co;
@@ -478,16 +485,22 @@ class BanamexController extends Controller {
 
     public function Folio() {
         $hoy = date('Y-m-d');
+
         $ventas = DB::table('banamex.tipificacion')
                 ->select('v_id')
                 ->whereDate('created_at', '=', date('Y-m-d'))
                 ->where([['v_id', '<>', '']])
                 ->count();
+
         $noVent = DB::table('banamex.tipificacion')
                 ->select('v_id')
                 ->whereDate('created_at', '=', date('Y-m-d'))
                 ->max('v_id');
+
         $num = substr($noVent, 3);
+
+        
+
         if ($ventas >= 1) {
             $num = $num + 1;
             $res = "BN1" . $num;
@@ -633,6 +646,8 @@ class BanamexController extends Controller {
                     case 'Jefe de BO': $menu = "layout.bo.jefebo"; break;
                 }
                 break;
+            default :
+                $menu = "layout.error.error";
         }
         return $menu;
     }
@@ -957,7 +972,7 @@ class BanamexController extends Controller {
     }
 
     public function GeneraExcel($fi = '', $ff = '') {
-        // dd($fi,$ff);
+        //dd($fi,$ff);
         ob_clean();
         Excel::create('Tipificaciones', function($excel) use($fi, $ff) {
             $excel->sheet('Tipificaciones', function($sheet) use($fi, $ff) {
@@ -974,7 +989,7 @@ class BanamexController extends Controller {
                         ->whereBetween('a.fecha', [$fi, $ff])
                         ->whereNotIn('dn', ['9999999999'])
                         ->get();
-                //  dd($datos);
+                  dd($datos);
 
 
                 foreach ($datos as $key => $value) {
@@ -1312,20 +1327,21 @@ class BanamexController extends Controller {
         $audios=[];
 
         try {
-          $location = file_get_contents("http://201.168.130.213:256/Gral/bbva-bmx/Banamex/$anio/$mes/$dia", 'r');
+          $location = file_get_contents("http://52.175.249.95/Grabaciones_Soluciones/CitiBMX/$anio/$mes/$dia", 'r');
+          //52.175.249.95/Grabaciones_Soluciones/CitiBMX/2018
           $location = explode("\n", $location);
 
           foreach ($location as $key => $value) {
             $pos = strpos($value, $dn);
-
             if ($pos === false) {
                 #
             } else {
-                $cadena = substr($value,13);
+                $cadena = substr($value,124);
                 $posicionsubcadena = strpos ($cadena, ".wav");
                 $dominio = substr ($cadena, ($posicionsubcadena));
                 $x= str_replace($dominio, ".wav", $cadena);
                 array_push($audios,$x);
+
             }
           }
         } catch (\Exception $e) {

@@ -7,6 +7,7 @@
                 <h3 class="panel-title">Reportes Soluciones</h3>
             </div>
             <div class="panel-body">
+			
 
                 {{ Form::open(['action' => 'ReportesInbursaSolucionesController@tipoReporte',
                                 'method' => 'post',
@@ -19,7 +20,10 @@
                     <div class="col-sm-10">
                         {{ Form::select('reporte', [
                         'Ventas por día' => 'Ventas por Día',
-                        'Ventas completo' => 'Ventas Completo'],
+                        'Ventas completo' => 'Ventas Completo',
+                        'Ventas Totales' => 'Ventas Totales',
+                        'Estatus 2' => 'Estatus 2', 
+                        'Ventas Operador' => 'Reporte de ventas por operador'],
                     '', ['required' => 'required', 'class'=>"form-control", 'placeholder'=>""]  ) }}
                     </div>
                 </div>
